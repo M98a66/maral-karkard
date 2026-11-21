@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="fa" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>حسابداری کار مارال</title>
+
+<script src="lib/html2canvas.min.js"></script>
+<script src="lib/jspdf.umd.min.js"></script>
+<style>
+@font-face{font-family:'Vazirmatn';font-weight:400;font-display:swap;src:url(lib/vazirmatn-arabic-400-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:'Vazirmatn';font-weight:400;font-display:swap;src:url(lib/vazirmatn-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Vazirmatn';font-weight:500;font-display:swap;src:url(lib/vazirmatn-arabic-500-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:'Vazirmatn';font-weight:500;font-display:swap;src:url(lib/vazirmatn-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Vazirmatn';font-weight:700;font-display:swap;src:url(lib/vazirmatn-arabic-700-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:'Vazirmatn';font-weight:700;font-display:swap;src:url(lib/vazirmatn-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+/* Layout: gradient brand header with live stats, pill tabs, soft elevated cards, big stat tiles; PDF preview as full-screen overlay. Palette: deep teal ink + amber highlight. */
+:root{
+  --bg:#eef3f4; --surface:#ffffff; --fg:#14262b; --muted:#60777d; --line:#dfe8ea;
+  --accent:#0e7c7b; --accent2:#0a5c6e; --on-accent:#ffffff; --soft:#f3f7f8; --ok:#14804f; --bad:#c4372b; --amber:#f5a524;
+  --shadow:0 1px 2px rgba(10,50,60,.06),0 8px 24px rgba(10,50,60,.07);
+  --hero:linear-gradient(135deg,#0a4f5c 0%,#0e7c7b 100%);
+  --font:'Vazirmatn',Tahoma,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c1417; --surface:#142126; --fg:#e6f0f2; --muted:#8aa1a8; --line:#25363c; --accent:#2bb5b0; --accent2:#1b8e9d; --on-accent:#04201f;
+  --soft:#1a2a30; --ok:#4cc38a; --bad:#ff8077; --amber:#f5b445; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --hero:linear-gradient(135deg,#0b2f38 0%,#0f5a5c 100%);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c1417; --surface:#142126; --fg:#e6f0f2; --muted:#8aa1a8; --line:#25363c; --accent:#2bb5b0; --accent2:#1b8e9d; --on-accent:#04201f;
+  --soft:#1a2a30; --ok:#4cc38a; --bad:#ff8077; --amber:#f5b445; --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+  --hero:linear-gradient(135deg,#0b2f38 0%,#0f5a5c 100%);color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:15px;line-height:1.7;direction:rtl;margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+.wrap{max-width:960px;margin:0 auto}
+header{margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));padding:calc(18px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 74px;background:var(--hero);color:#fff;border-radius:0 0 28px 28px}
+.hd{max-width:960px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:46px;height:46px;border-radius:14px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);display:grid;place-items:center;font-size:24px;font-weight:700;color:#fff}
+.brand h1{font-size:21px;margin:0;font-weight:700;line-height:1.3}
+.brand p{margin:0;font-size:13px;opacity:.8}
+.stats{max-width:960px;margin:-52px auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;position:relative}
+.stat{background:var(--surface);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat b{font-size:17px;font-variant-numeric:tabular-nums}
+.stat.k b{color:var(--ok)}.stat.d b{color:var(--bad)}
+nav{display:flex;gap:6px;overflow-x:auto;margin:16px 0 0;padding:5px;background:var(--surface);border-radius:999px;box-shadow:var(--shadow);position:sticky;top:calc(8px + env(safe-area-inset-top,0px));z-index:8}
+nav button{font:inherit;font-size:14px;background:none;border:0;color:var(--muted);padding:8px 16px;cursor:pointer;white-space:nowrap;border-radius:999px;transition:background .15s,color .15s}
+nav button:hover{color:var(--fg)}
+nav button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+main{display:flex;flex-direction:column;gap:16px;padding-top:16px}
+section{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border-radius:20px;padding:20px;box-shadow:var(--shadow);min-width:0}
+h2{font-size:18px;margin:0 0 14px;font-weight:700}h3{font-size:15px;margin:0 0 12px;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin-bottom:14px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+label{font-size:13px;color:var(--muted)}
+input,select,textarea{font:inherit;color:var(--fg);background:var(--soft);border:1.5px solid transparent;border-radius:12px;padding:10px 12px;min-width:0;width:100%;transition:border-color .15s,background .15s}
+input:focus,select:focus{outline:none;border-color:var(--accent);background:var(--surface)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.dp{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.dp select{width:auto;flex:1 1 64px;padding-inline:8px}
+.wd{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:700;white-space:nowrap}
+.tick{display:flex;gap:10px;align-items:center;font-size:15px;color:var(--fg);margin-bottom:14px;background:var(--soft);border-radius:12px;padding:10px 14px;width:fit-content;cursor:pointer}
+.tick input{width:20px;height:20px;accent-color:var(--accent)}
+.btn{font:inherit;font-weight:700;background:var(--accent);color:var(--on-accent);border:0;border-radius:12px;padding:10px 20px;cursor:pointer;transition:transform .1s,filter .15s}
+.btn:hover{filter:brightness(1.08)}.btn:active{transform:scale(.97)}
+.btn.alt{background:var(--soft);color:var(--fg)}
+.btn.amber{background:var(--amber);color:#2a1a00}
+.btn.sm{padding:5px 12px;font-size:13px;border-radius:10px}
+.btn.del{background:none;color:var(--bad);box-shadow:inset 0 0 0 1px var(--line)}
+.btn.del[data-armed]{background:var(--bad);color:#fff;box-shadow:none}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.preview{background:linear-gradient(90deg,color-mix(in srgb,var(--accent) 10%,transparent),transparent);border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:14px;color:var(--muted)}
+.preview b{color:var(--fg)}
+.tw{overflow-x:auto;border-radius:12px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line)}
+th{font-size:12.5px;color:var(--muted);font-weight:500;background:var(--soft)}
+tr:last-child td{border-bottom:0}
+.pill{display:inline-block;border-radius:999px;padding:1px 11px;font-size:12px;font-weight:700}
+.pill.y{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.pill.n{background:color-mix(in srgb,var(--bad) 14%,transparent);color:var(--bad)}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
+.sum div{background:var(--soft);border-radius:14px;padding:10px 14px}
+.sum small{display:block;color:var(--muted);font-size:12px}
+.sum b{font-size:17px}
+.sum .final{grid-column:1/-1;background:var(--hero);color:#fff}
+.sum .final small{color:inherit;opacity:.85}.sum .final b{font-size:22px}
+.pos{color:var(--ok)}.neg{color:var(--bad)}
+.empty{color:var(--muted);text-align:center;padding:24px 8px}
+.muted{color:var(--muted);font-size:13px}
+.item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.item:last-child{border-bottom:0}
+.item .t{min-width:0;flex:1 1 200px}
+.avatar{width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--accent) 15%,transparent);color:var(--accent);display:grid;place-items:center;font-weight:700;flex:none}
+.item.e{justify-content:flex-start}
+#toast{position:fixed;bottom:calc(18px + env(safe-area-inset-bottom,0px));inset-inline:16px;margin:auto;width:fit-content;max-width:90%;background:var(--fg);color:var(--bg);padding:10px 18px;border-radius:999px;text-align:center;z-index:40;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+.pv{position:fixed;inset:0;z-index:30;background:var(--bg);display:flex;flex-direction:column}
+.pv-bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:calc(10px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));background:var(--surface);box-shadow:var(--shadow)}
+.pv-body{flex:1;overflow:auto;padding:16px max(16px,env(safe-area-inset-left,0px)) 40px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.pv-body img{width:100%;max-width:794px;background:#fff;border-radius:6px;box-shadow:var(--shadow)}
+.spin{color:var(--muted);padding:40px}
+#pdf-sheet{position:fixed;left:-10000px;top:0;width:794px;background:#fff;color:#14262b;direction:rtl;font-family:var(--font);font-size:13px;line-height:1.7;padding:36px}
+#pdf-sheet table{width:100%;border-collapse:collapse;margin-bottom:6px}
+#pdf-sheet th{background:#e8f1f2;color:#35555c;font-size:11.5px;padding:6px 8px;text-align:right;border:1px solid #cfdcdf}
+#pdf-sheet td{padding:6px 8px;border:1px solid #dfe8ea;text-align:right;font-size:12px}
+.ps-head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #0e7c7b;padding-bottom:10px;margin-bottom:16px}
+.ps-t{font-size:22px;font-weight:700;color:#0a5c6e}.ps-s{font-size:12px;color:#60777d}
+.ps-n{font-size:17px;font-weight:700;margin:14px 0 8px;color:#14262b}
+.ps-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.ps-sum div{background:#f3f7f8;border-radius:8px;padding:6px 10px}
+.ps-sum small{display:block;font-size:11px;color:#60777d}.ps-sum b{font-size:13px}
+.ps-sum .f{grid-column:1/-1;background:#0e7c7b;color:#fff}.ps-sum .f small{color:#d6f0ef}.ps-sum .f b{font-size:16px}
+.ps-h3{font-weight:700;margin:10px 0 6px;font-size:13px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+
+</head><body>
+<div class="wrap" lang="fa">
+<header><div class="hd"><div class="brand"><div class="logo">م</div><div><h1>حسابداری کار مارال</h1><p>دفتر کارکرد، اضافه‌کار و حساب کارگران</p></div></div></div></header>
+<div class="stats" id="stats"></div>
+<nav role="tablist" id="nav">
+    <button data-tab="work" aria-selected="true">ثبت کارکرد</button>
+    <button data-tab="pay" aria-selected="false">دریافتی‌ها</button>
+    <button data-tab="emp" aria-selected="false">کارمندان</button>
+    <button data-tab="rep" aria-selected="false">گزارش و خروجی</button>
+    <button data-tab="set" aria-selected="false">محل‌ها و تنظیمات</button>
+</nav>
+<main>
+<section id="tab-work">
+  <div class="card">
+    <h2>ثبت کارکرد روزانه</h2>
+    <div class="grid">
+      <div class="field"><label for="w-emp">کارمند</label><select id="w-emp"></select></div>
+      <div data-dp="wdp" data-label="تاریخ (شمسی)"></div>
+      <div class="field"><label for="w-wage">مزد روزانه</label><input id="w-wage" class="money" inputmode="decimal"></div>
+      <div class="field"><label for="w-ot">اضافه‌کار (ساعت)</label><input id="w-ot" inputmode="decimal" placeholder="۰"></div>
+      <div class="field"><label for="w-place">محل کار</label><select id="w-place"></select></div>
+      <div class="field"><label for="w-note">توضیح</label><input id="w-note"></div>
+    </div>
+    <label class="tick"><input type="checkbox" id="w-worked" checked> سر کار آمد</label>
+    <div class="preview" id="w-prev"></div>
+    <div class="row"><button class="btn" data-act="saveWork">ثبت کارکرد</button><span class="muted" id="w-msg"></span></div>
+  </div>
+  <div class="card"><h3 id="w-title">آخرین کارکردها</h3><div id="w-list"></div></div>
+</section>
+
+<section id="tab-pay" hidden>
+  <div class="card">
+    <h2>ثبت مبلغ دریافتی</h2>
+    <div class="grid">
+      <div class="field"><label for="p-emp">کارمند</label><select id="p-emp"></select></div>
+      <div data-dp="pdp" data-label="تاریخ دریافت"></div>
+      <div class="field"><label for="p-amt">مبلغ دریافتی</label><input id="p-amt" class="money" inputmode="decimal"></div>
+      <div class="field"><label for="p-note">توضیح</label><input id="p-note" placeholder="نقد، کارت، علی‌الحساب..."></div>
+    </div>
+    <div class="row"><button class="btn" data-act="savePay">ثبت دریافتی</button></div>
+  </div>
+  <div class="card"><h3 id="p-title">دریافتی‌های ثبت‌شده</h3><div id="p-list"></div></div>
+</section>
+
+<section id="tab-emp" hidden>
+  <div class="card">
+    <h2 id="e-head">کارمند جدید</h2>
+    <input type="hidden" id="e-id">
+    <div class="grid">
+      <div class="field"><label for="e-name">نام و نام خانوادگی</label><input id="e-name"></div>
+      <div class="field"><label for="e-phone">تلفن (اختیاری)</label><input id="e-phone" inputmode="tel"></div>
+      <div class="field"><label for="e-wage">مزد روزانه پیش‌فرض</label><input id="e-wage" class="money" inputmode="decimal"></div>
+      <div class="field"><label for="e-credit">بستانکاری قبلی (ما به او بدهکاریم)</label><input id="e-credit" class="money" inputmode="decimal"></div>
+      <div class="field"><label for="e-debt">بدهی قبلی (او به ما بدهکار است)</label><input id="e-debt" class="money" inputmode="decimal"></div>
+    </div>
+    <div class="row"><button class="btn" data-act="saveEmp">ذخیره کارمند</button><button class="btn alt" data-act="cancelEmp" id="e-cancel" hidden>انصراف از ویرایش</button></div>
+  </div>
+  <div class="card"><h3>فهرست کارمندان</h3><div id="e-list"></div></div>
+</section>
+
+<section id="tab-rep" hidden>
+  <div class="card">
+    <h2>گزارش کارکرد</h2>
+    <div class="grid">
+      <div class="field"><label for="r-emp">کارمند</label><select id="r-emp"></select></div>
+      <div data-dp="rfrom" data-label="از تاریخ"></div>
+      <div data-dp="rto" data-label="تا تاریخ"></div>
+      <div class="field"><label for="r-place">محل کار</label><select id="r-place"></select></div>
+    </div>
+    <div class="row">
+      <button class="btn" data-act="previewPdf">پیش‌نمایش PDF</button>
+      <button class="btn amber" data-act="pdfDl">دانلود PDF</button>
+      <button class="btn alt" data-act="exportCsv">دانلود اکسل</button>
+      <button class="btn alt" data-act="copyRep">کپی گزارش متنی</button>
+    </div>
+  </div>
+  <div class="card" id="r-out"></div>
+</section>
+
+<section id="tab-set" hidden>
+  <div class="card">
+    <h2>محل‌های کار</h2>
+    <div class="row" style="margin-bottom:10px"><input id="pl-name" placeholder="نام محل کار، مثلاً پروژه ..." style="flex:1 1 200px;width:auto"><button class="btn" data-act="addPlace">افزودن</button></div>
+    <div id="pl-list"></div>
+  </div>
+  <div class="card">
+    <h2>تنظیمات محاسبه</h2>
+    <div class="grid">
+      <div class="field"><label for="s-hours">ساعت کار عادی در روز</label><input id="s-hours" inputmode="decimal"></div>
+      <div class="field"><label for="s-coef">ضریب اضافه‌کار (مثلاً ۱.۴)</label><input id="s-coef" inputmode="decimal"></div>
+      <div class="field"><label for="s-unit">واحد پول</label><select id="s-unit"><option>تومان</option><option>ریال</option></select></div>
+    </div>
+    <p class="muted">مبلغ اضافه‌کار = ساعت اضافه‌کار × (مزد روز ÷ ساعت کار عادی) × ضریب</p>
+  </div>
+  <div class="card">
+    <h2>پشتیبان‌گیری</h2>
+    <div class="row">
+      <button class="btn alt" data-act="backup">ذخیره نسخه پشتیبان</button>
+      <label class="btn alt" for="restore" style="color:var(--fg)">بازیابی از فایل</label>
+      <input type="file" id="restore" accept=".json,application/json" hidden>
+    </div>
+    <p class="muted">اطلاعات به صورت خودکار ذخیره می‌شود. نسخه پشتیبان را گاهی ذخیره کنید.</p>
+  </div>
+</section>
+</main>
+</div>
+<div id="toast" role="status"></div>
+<div id="pdf-sheet" aria-hidden="true"></div>
+<div id="pv" class="pv" hidden><div class="pv-bar"><b>پیش‌نمایش گزارش PDF</b><div class="row"><button class="btn amber sm" data-act="pdfDl">دانلود PDF</button><button class="btn alt sm" data-act="pvClose">بستن</button></div></div><div class="pv-body" id="pv-body"></div></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const WD=['یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه','شنبه'];
+const MN=['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+const div=(a,b)=>Math.trunc(a/b);
+const fa=s=>String(s).replace(/\d/g,d=>'۰۱۲۳۴۵۶۷۸۹'[d]);
+const p2=n=>String(n).padStart(2,'0');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+/* ---- Jalali ---- */
+function toJal(gy,gm,gd){const g=[0,31,59,90,120,151,181,212,243,273,304,334];
+  const gy2=gm>2?gy+1:gy;let days=355666+365*gy+div(gy2+3,4)-div(gy2+99,100)+div(gy2+399,400)+gd+g[gm-1];
+  let jy=-1595+33*div(days,12053);days%=12053;jy+=4*div(days,1461);days%=1461;
+  if(days>365){jy+=div(days-1,365);days=(days-1)%365}
+  const jm=days<186?1+div(days,31):7+div(days-186,30);const jd=1+(days<186?days%31:(days-186)%30);return[jy,jm,jd]}
+function toGreg(jy,jm,jd){jy+=1595;let days=-355668+365*jy+div(jy,33)*8+div((jy%33)+3,4)+jd+(jm<7?(jm-1)*31:(jm-7)*30+186);
+  let gy=400*div(days,146097);days%=146097;
+  if(days>36524){days--;gy+=100*div(days,36524);days%=36524;if(days>=365)days++}
+  gy+=4*div(days,1461);days%=1461;if(days>365){gy+=div(days-1,365);days=(days-1)%365}
+  let gd=days+1;const leap=(gy%4===0&&gy%100!==0)||gy%400===0;
+  const sa=[0,31,leap?29:28,31,30,31,30,31,31,30,31,30,31];let gm;for(gm=0;gm<13&&gd>sa[gm];gm++)gd-=sa[gm];return[gy,gm,gd]}
+const isLeap=y=>{const g=toGreg(y,12,30),j=toJal(...g);return j[0]===y&&j[1]===12&&j[2]===30};
+const dim=(y,m)=>m<7?31:m<12?30:(isLeap(y)?30:29);
+const jstr=(y,m,d)=>y+'-'+p2(m)+'-'+p2(d);
+const parse=s=>s.split('-').map(Number);
+const wdOf=s=>{const[y,m,d]=parse(s),g=toGreg(y,m,d);return new Date(g[0],g[1]-1,g[2]).getDay()};
+const fmtD=s=>{const[y,m,d]=parse(s);return fa(d+' '+MN[m-1]+' '+y)};
+const nowJ=()=>{const n=new Date();return toJal(n.getFullYear(),n.getMonth()+1,n.getDate())};
+/* ---- numbers ---- */
+const num=s=>parseFloat(String(s??'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[٠-٩]/g,c=>'٠١٢٣٤٥٦٧٨٩'.indexOf(c)).replace(/[,٬،\s]/g,'').replace('٫','.'))||0;
+const money=n=>fa(Math.round(n).toLocaleString('en-US').replace(/,/g,'٬'));
+const hrs=n=>fa(+(+n).toFixed(2));
+/* ---- state ---- */
+let S={emps:[],places:[],days:[],pays:[],set:{hours:8,coef:1.4,unit:'تومان'}};
+const norm=j=>({emps:j.emps||[],places:j.places||[],days:j.days||[],pays:j.pays||[],set:Object.assign({hours:8,coef:1.4,unit:'تومان'},j.set||{})});
+try{const l=localStorage.getItem('maral-acc');if(l)S=norm(JSON.parse(l))}catch(e){}
+let dbDoc=null,saveT=null;
+function persist(){try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(e){}
+  clearTimeout(saveT);saveT=setTimeout(()=>{if(dbDoc)dbDoc.set({json:JSON.stringify(S),at:Date.now()}).catch(()=>{})},400)}
+const U=()=>S.set.unit;
+const emp=id=>S.emps.find(e=>e.id===id);
+const dayPay=r=>{const base=r.worked?r.wage:0;const ot=(r.ot||0)*(r.wage/(S.set.hours||8))*S.set.coef;return{base,ot}};
+function balanceBefore(id,from){const e=emp(id);if(!e)return 0;let b=(e.credit||0)-(e.debt||0);
+  S.days.forEach(r=>{if(r.emp===id&&r.date<from){const x=dayPay(r);b+=x.base+x.ot}});
+  S.pays.forEach(r=>{if(r.emp===id&&r.date<from)b-=r.amount});return b}
+const balNow=id=>balanceBefore(id,'9999-99-99');
+const balTxt=b=>b>=0?`<span class="pos">${money(b)} ${U()} بستانکار</span>`:`<span class="neg">${money(-b)} ${U()} بدهکار</span>`;
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),2600)}
+/* ---- date pickers ---- */
+function fillDays(dp,keep){const y=+dp.querySelector('.dy').value,m=+dp.querySelector('.dm').value,n=dim(y,m);const ds=dp.querySelector('.dd');
+  const cur=keep||+ds.value||1;ds.innerHTML=Array.from({length:n},(_,i)=>`<option value="${i+1}">${fa(i+1)}</option>`).join('');ds.value=Math.min(cur,n)}
+function updWd(dp){const s=dpGet(dp.id);dp.querySelector('.wd').textContent=WD[wdOf(s)]}
+function buildDP(el){const id=el.dataset.dp;el.className='field';
+  el.innerHTML=`<label>${el.dataset.label}</label><div class="dp" id="${id}"><select class="dd" aria-label="روز"></select><select class="dm" aria-label="ماه">${MN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('')}</select><select class="dy" aria-label="سال"></select><span class="wd"></span></div>`;
+  const dp=$(id),cy=nowJ()[0];dp.querySelector('.dy').innerHTML=Array.from({length:7},(_,i)=>cy-5+i).map(y=>`<option value="${y}">${fa(y)}</option>`).join('');
+  dp.addEventListener('change',e=>{if(!e.target.classList.contains('dd'))fillDays(dp);updWd(dp);dp.dispatchEvent(new CustomEvent('dpchange',{bubbles:true}))});
+  const[y,m,d]=nowJ();dpSet(id,jstr(y,m,d))}
+const dpGet=id=>{const dp=$(id);return jstr(+dp.querySelector('.dy').value,+dp.querySelector('.dm').value,+dp.querySelector('.dd').value)};
+function dpSet(id,s){const dp=$(id),[y,m,d]=parse(s),ys=dp.querySelector('.dy');
+  if(![...ys.options].some(o=>+o.value===y)){ys.add(new Option(fa(y),y))}
+  ys.value=y;dp.querySelector('.dm').value=m;fillDays(dp,d);updWd(dp)}
+/* ---- selects ---- */
+function empOpts(sel,all){const cur=sel.value;sel.innerHTML=(all?'<option value="">همه کارمندان</option>':'')+(S.emps.length||all?'':'<option value="">ابتدا کارمند ثبت کنید</option>')+S.emps.map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===cur))sel.value=cur}
+function placeOpts(sel,all){const cur=sel.value;sel.innerHTML=`<option value="">${all?'همه محل‌ها':'— بدون محل —'}</option>`+S.places.map(p=>`<option>${esc(p)}</option>`).join('');
+  if([...sel.options].some(o=>o.value===cur))sel.value=cur}
+/* ---- work ---- */
+function loadWork(){const id=$('w-emp').value,date=dpGet('wdp'),e=emp(id);
+  const r=S.days.find(x=>x.emp===id&&x.date===date);
+  $('w-worked').checked=r?r.worked:true;$('w-wage').value=r?fmtIn(r.wage):(e&&e.wage?fmtIn(e.wage):'');
+  $('w-ot').value=r&&r.ot?r.ot:'';$('w-place').value=r?r.place||'':$('w-place').value;$('w-note').value=r?r.note||'':'';
+  $('w-msg').textContent=r?'برای این روز قبلاً ثبت شده؛ ذخیره، آن را جایگزین می‌کند.':'';prevWork()}
+const fmtIn=n=>n?Math.round(n).toLocaleString('en-US'):'';
+function prevWork(){const wage=num($('w-wage').value),ot=num($('w-ot').value),w=$('w-worked').checked;
+  const b=w?wage:0,o=ot*(wage/(S.set.hours||8))*S.set.coef;
+  $('w-prev').innerHTML=`مزد روز: <b>${money(b)}</b> · اضافه‌کار: <b>${money(o)}</b> · جمع: <b>${money(b+o)} ${U()}</b>`}
+function renderWork(){empOpts($('w-emp'));placeOpts($('w-place'));
+  const id=$('w-emp').value,e=emp(id);
+  $('w-title').innerHTML=e?`کارکردهای ${esc(e.name)} — مانده: ${balTxt(balNow(id))}`:'آخرین کارکردها';
+  const rows=S.days.filter(r=>r.emp===id).sort((a,b)=>b.date.localeCompare(a.date)).slice(0,40);
+  $('w-list').innerHTML=rows.length?`<div class="tw"><table><tr><th>تاریخ</th><th>روز</th><th>وضعیت</th><th>محل</th><th>اضافه‌کار</th><th>جمع روز</th><th></th></tr>`+rows.map(r=>{const x=dayPay(r);
+    return`<tr><td>${fmtD(r.date)}</td><td>${WD[wdOf(r.date)]}</td><td><span class="pill ${r.worked?'y':'n'}">${r.worked?'کار کرد':'غایب'}</span></td><td>${esc(r.place||'—')}</td><td>${r.ot?hrs(r.ot)+' ساعت':'—'}</td><td>${money(x.base+x.ot)}</td><td><button class="btn alt sm" data-act="editDay" data-id="${r.id}">ویرایش</button> <button class="btn del sm" data-act="delDay" data-id="${r.id}">حذف</button></td></tr>`}).join('')+'</table></div>'
+    :`<div class="empty">${S.emps.length?'هنوز کارکردی برای این کارمند ثبت نشده است.':'برای شروع، از بخش «کارمندان» یک کارمند اضافه کنید.'}</div>`}
+/* ---- pays ---- */
+function renderPays(){empOpts($('p-emp'));const id=$('p-emp').value,e=emp(id);
+  $('p-title').innerHTML=e?`دریافتی‌های ${esc(e.name)} — مانده: ${balTxt(balNow(id))}`:'دریافتی‌های ثبت‌شده';
+  const rows=S.pays.filter(r=>r.emp===id).sort((a,b)=>b.date.localeCompare(a.date));
+  $('p-list').innerHTML=rows.length?rows.map(r=>`<div class="item"><div class="t"><b>${money(r.amount)} ${U()}</b><div class="muted">${WD[wdOf(r.date)]} ${fmtD(r.date)}${r.note?' · '+esc(r.note):''}</div></div><button class="btn del sm" data-act="delPay" data-id="${r.id}">حذف</button></div>`).join(''):'<div class="empty">دریافتی‌ای ثبت نشده است.</div>'}
+/* ---- employees ---- */
+function renderEmps(){$('e-list').innerHTML=S.emps.length?S.emps.map(e=>`<div class="item"><span class="avatar">${esc(e.name.trim()[0]||'؟')}</span><div class="t"><b>${esc(e.name)}</b>${e.phone?` <span class="muted">${fa(esc(e.phone))}</span>`:''}<div class="muted">مزد روزانه: ${money(e.wage||0)} ${U()} · مانده: ${balTxt(balNow(e.id))}</div></div><div class="row"><button class="btn alt sm" data-act="editEmp" data-id="${e.id}">ویرایش</button><button class="btn del sm" data-act="delEmp" data-id="${e.id}">حذف با همه سوابق</button></div></div>`).join(''):'<div class="empty">کارمندی ثبت نشده است. فرم بالا را پر کنید.</div>'}
+function clearEmpForm(){['e-id','e-name','e-phone','e-wage','e-credit','e-debt'].forEach(i=>$(i).value='');$('e-head').textContent='کارمند جدید';$('e-cancel').hidden=true}
+/* ---- places & settings ---- */
+function renderPlaces(){$('pl-list').innerHTML=S.places.length?S.places.map((p,i)=>`<div class="item"><span>${esc(p)}</span><button class="btn del sm" data-act="delPlace" data-id="${i}">حذف</button></div>`).join(''):'<div class="empty">هنوز محل کاری اضافه نشده است.</div>';
+  $('s-hours').value=S.set.hours;$('s-coef').value=S.set.coef;$('s-unit').value=S.set.unit}
+/* ---- report ---- */
+function calc(id,from,to,place){const e=emp(id);
+  const days=S.days.filter(r=>r.emp===id&&r.date>=from&&r.date<=to&&(!place||r.place===place)).sort((a,b)=>a.date.localeCompare(b.date));
+  const pays=place?[]:S.pays.filter(r=>r.emp===id&&r.date>=from&&r.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
+  let worked=0,ot=0,base=0,otp=0;days.forEach(r=>{const x=dayPay(r);if(r.worked)worked++;ot+=r.ot||0;base+=x.base;otp+=x.ot});
+  const paid=pays.reduce((s,r)=>s+r.amount,0),prior=place?0:balanceBefore(id,from);
+  return{e,days,pays,worked,ot,base,otp,earn:base+otp,paid,prior,final:prior+base+otp-paid,place}}
+function repArgs(){return{id:$('r-emp').value,from:dpGet('rfrom'),to:dpGet('rto'),place:$('r-place').value}}
+function renderReport(){const{id,from,to,place}=repArgs();const out=$('r-out');
+  if(from>to){out.innerHTML='<div class="empty">تاریخ شروع باید قبل از تاریخ پایان باشد.</div>';return}
+  const head=`<h3>از ${fmtD(from)} تا ${fmtD(to)}${place?' · '+esc(place):''}</h3>`;
+  if(!S.emps.length){out.innerHTML='<div class="empty">ابتدا کارمند ثبت کنید.</div>';return}
+  if(!id){const rs=S.emps.map(e=>calc(e.id,from,to,place));
+    out.innerHTML=head+`<div class="tw"><table><tr><th>کارمند</th><th>روز کار</th><th>اضافه‌کار (ساعت)</th><th>جمع درآمد</th><th>دریافتی</th>${place?'':'<th>مانده</th>'}</tr>`+rs.map(r=>`<tr><td>${esc(r.e.name)}</td><td>${fa(r.worked)}</td><td>${hrs(r.ot)}</td><td>${money(r.earn)}</td><td>${money(r.paid)}</td>${place?'':`<td>${balTxt(r.final)}</td>`}</tr>`).join('')+'</table></div>';return}
+  const r=calc(id,from,to,place);
+  out.innerHTML=head+`<div class="sum">
+   <div><small>روزهای کارکرد</small><b>${fa(r.worked)}</b></div><div><small>جمع اضافه‌کار</small><b>${hrs(r.ot)} ساعت</b></div>
+   <div><small>مزد روزانه</small><b>${money(r.base)}</b></div><div><small>مبلغ اضافه‌کار</small><b>${money(r.otp)}</b></div>
+   <div><small>جمع درآمد</small><b>${money(r.earn)}</b></div>${place?'':`<div><small>کسر: دریافتی</small><b>${money(r.paid)}</b></div><div><small>مانده از قبل</small><b>${money(r.prior)}</b></div>
+   <div class="final"><small>${r.final>=0?'مانده قابل پرداخت به کارمند':'مانده بدهکار به شما'} (${U()})</small><b>${money(Math.abs(r.final))}</b></div>`}</div>`+
+   (r.days.length?`<div class="tw"><table><tr><th>تاریخ</th><th>روز</th><th>وضعیت</th><th>محل</th><th>مزد</th><th>اضافه‌کار</th><th>مبلغ اضافه‌کار</th><th>جمع روز</th></tr>`+r.days.map(d=>{const x=dayPay(d);return`<tr><td>${fmtD(d.date)}</td><td>${WD[wdOf(d.date)]}</td><td><span class="pill ${d.worked?'y':'n'}">${d.worked?'کار کرد':'غایب'}</span></td><td>${esc(d.place||'—')}</td><td>${money(x.base)}</td><td>${d.ot?hrs(d.ot):'—'}</td><td>${money(x.ot)}</td><td>${money(x.base+x.ot)}</td></tr>`}).join('')+'</table></div>':'<div class="empty">کارکردی در این بازه ثبت نشده است.</div>')+
+   (r.pays.length?`<h3 style="margin-top:16px">دریافتی‌ها</h3><div class="tw"><table><tr><th>تاریخ</th><th>روز</th><th>مبلغ</th><th>توضیح</th></tr>`+r.pays.map(p=>`<tr><td>${fmtD(p.date)}</td><td>${WD[wdOf(p.date)]}</td><td>${money(p.amount)}</td><td>${esc(p.note||'')}</td></tr>`).join('')+'</table></div>':'')}
+function repText(){const{id,from,to,place}=repArgs();const L=[];const u=U();
+  const per=`از ${fmtD(from)} تا ${fmtD(to)}${place?' ('+place+')':''}`;
+  const list=id?[calc(id,from,to,place)]:S.emps.map(e=>calc(e.id,from,to,place));
+  list.forEach(r=>{L.push(`گزارش کارکرد — ${r.e.name}`,per,`روز کارکرد: ${fa(r.worked)}`,`اضافه‌کار: ${hrs(r.ot)} ساعت`,`مزد روزانه: ${money(r.base)} ${u}`,`مبلغ اضافه‌کار: ${money(r.otp)} ${u}`,`جمع درآمد: ${money(r.earn)} ${u}`);
+    if(!place){L.push(`دریافتی (کسر): ${money(r.paid)} ${u}`,`مانده از قبل: ${money(r.prior)} ${u}`,`${r.final>=0?'مانده قابل پرداخت به کارمند':'مانده بدهکار به شما'}: ${money(Math.abs(r.final))} ${u}`)}L.push('')});return L.join('\n')}
+function repCsv(){const{id,from,to,place}=repArgs();const R=[];const q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const list=id?[calc(id,from,to,place)]:S.emps.map(e=>calc(e.id,from,to,place));
+  list.forEach(r=>{R.push(['گزارش کارکرد',r.e.name],['از',from,'تا',to,'محل',place||'همه'],[]);
+    R.push(['تاریخ','روز','وضعیت','محل','مزد','ساعت اضافه‌کار','مبلغ اضافه‌کار','جمع روز']);
+    r.days.forEach(d=>{const x=dayPay(d);R.push([d.date,WD[wdOf(d.date)],d.worked?'کار کرد':'غایب',d.place||'',Math.round(x.base),d.ot||0,Math.round(x.ot),Math.round(x.base+x.ot)])});
+    if(r.pays.length){R.push([],['دریافتی‌ها','','مبلغ','توضیح']);r.pays.forEach(p=>R.push([p.date,WD[wdOf(p.date)],p.amount,p.note||'']))}
+    R.push([],['روزهای کارکرد',r.worked],['جمع ساعت اضافه‌کار',r.ot],['مزد روزانه',Math.round(r.base)],['مبلغ اضافه‌کار',Math.round(r.otp)],['جمع درآمد',Math.round(r.earn)]);
+    if(!place)R.push(['دریافتی (کسر)',r.paid],['مانده از قبل',Math.round(r.prior)],['مانده نهایی (مثبت = بستانکار)',Math.round(r.final)]);R.push([],[])});
+  return'﻿'+R.map(x=>x.map(q).join(',')).join('\r\n')}
+async function saveFile(name,data,type){
+  const blob=data instanceof Blob?data:new Blob([data],{type});
+  try{const d=await window.claude?.use?.('downloads');if(d){await d.save({filename:name,data:blob});toast('فایل آماده ذخیره است');return}}catch(e){if(e&&e.code==='declined')return}
+  const C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform()){try{const FS=C.Plugins.Filesystem,SH=C.Plugins.Share;
+    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]);r.onerror=rej;r.readAsDataURL(blob)});
+    const w=await FS.writeFile({path:name,data:b64,directory:'CACHE'});await SH.share({title:name,url:w.uri,dialogTitle:'ذخیره یا ارسال فایل'});return}catch(e){if(e&&/cancel/i.test(String(e.message||e)))return;toast('ذخیره فایل انجام نشد');return}}
+  try{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();toast('فایل دانلود شد')}catch(e){toast('ذخیره فایل انجام نشد')}}
+async function copyText(t){try{await navigator.clipboard.writeText(t);toast('گزارش کپی شد')}catch(e){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+  let ok=false;try{ok=document.execCommand('copy')}catch(_){}ta.remove();toast(ok?'گزارش کپی شد':'کپی انجام نشد')}}
+
+/* ---- stats ---- */
+function renderStats(){let k=0,d=0;S.emps.forEach(e=>{const b=balNow(e.id);if(b>0)k+=b;else d-=b});
+  const[y,m]=nowJ(),pre=y+'-'+p2(m)+'-';const mw=S.days.filter(r=>r.worked&&r.date.startsWith(pre)).length;
+  $('stats').innerHTML=`<div class="stat"><small>کارمندان</small><b>${fa(S.emps.length)}</b></div><div class="stat"><small>کارکرد ${MN[m-1]}</small><b>${fa(mw)} روز</b></div><div class="stat k"><small>بستانکاری کارمندان</small><b>${money(k)} ${U()}</b></div><div class="stat d"><small>بدهی کارمندان</small><b>${money(d)} ${U()}</b></div>`}
+/* ---- PDF ---- */
+function sheetHtml(){const{id,from,to,place}=repArgs();const u=U();
+  const list=id?[calc(id,from,to,place)]:S.emps.map(e=>calc(e.id,from,to,place));
+  let h=`<div class="ps-head"><div><div class="ps-t">حسابداری کار مارال</div><div class="ps-s">گزارش کارکرد · از ${fmtD(from)} تا ${fmtD(to)}${place?' · '+esc(place):''}</div></div><div class="ps-s">تاریخ تهیه: ${fmtD(jstr(...nowJ()))}</div></div>`;
+  list.forEach(r=>{h+=`<div class="ps-n">${esc(r.e.name)}</div><div class="ps-sum"><div><small>روز کارکرد</small><b>${fa(r.worked)}</b></div><div><small>جمع اضافه‌کار</small><b>${hrs(r.ot)} ساعت</b></div><div><small>مزد روزانه</small><b>${money(r.base)}</b></div><div><small>مبلغ اضافه‌کار</small><b>${money(r.otp)}</b></div><div><small>جمع درآمد</small><b>${money(r.earn)}</b></div>${place?'':`<div><small>کسر: دریافتی</small><b>${money(r.paid)}</b></div><div><small>مانده از قبل</small><b>${money(r.prior)}</b></div><div></div><div class="f"><small>${r.final>=0?'مانده قابل پرداخت به کارمند':'مانده بدهکار به شما'} (${u})</small><b>${money(Math.abs(r.final))}</b></div>`}</div>`;
+    if(r.days.length)h+=`<table><tr><th>تاریخ</th><th>روز</th><th>وضعیت</th><th>محل</th><th>مزد</th><th>اضافه‌کار</th><th>مبلغ اضافه‌کار</th><th>جمع روز</th></tr>`+r.days.map(d=>{const x=dayPay(d);return`<tr><td>${fmtD(d.date)}</td><td>${WD[wdOf(d.date)]}</td><td>${d.worked?'کار کرد':'غایب'}</td><td>${esc(d.place||'—')}</td><td>${money(x.base)}</td><td>${d.ot?hrs(d.ot):'—'}</td><td>${money(x.ot)}</td><td>${money(x.base+x.ot)}</td></tr>`}).join('')+'</table>';
+    if(r.pays.length)h+=`<div class="ps-h3">دریافتی‌ها</div><table><tr><th>تاریخ</th><th>روز</th><th>مبلغ</th><th>توضیح</th></tr>`+r.pays.map(p=>`<tr><td>${fmtD(p.date)}</td><td>${WD[wdOf(p.date)]}</td><td>${money(p.amount)}</td><td>${esc(p.note||'')}</td></tr>`).join('')+'</table>'});
+  return h}
+let PG=null;
+async function makePages(){
+  const{from,to}=repArgs();if(!S.emps.length){toast('ابتدا کارمند ثبت کنید');return null}
+  if(from>to){toast('تاریخ شروع باید قبل از تاریخ پایان باشد');return null}
+  if(!window.html2canvas||!window.jspdf){toast('کتابخانه PDF بارگذاری نشد؛ اتصال اینترنت را بررسی کنید');return null}
+  const sh=$('pdf-sheet');sh.innerHTML=sheetHtml();try{await document.fonts.ready}catch(e){}
+  const W=794,PH=1123,M=60,top=sh.getBoundingClientRect().top;
+  const bps=[...sh.querySelectorAll('tr,.ps-head,.ps-n,.ps-sum,.ps-h3')].map(e=>e.getBoundingClientRect().bottom-top).sort((a,b)=>a-b);
+  const H=Math.ceil(sh.scrollHeight);
+  const cv=await html2canvas(sh,{scale:2,backgroundColor:'#ffffff',width:W,windowWidth:W});
+  const pages=[];let y=0;
+  while(y<H-1){const lim=y+PH-2*M;let end=lim>=H?H:(bps.filter(b=>b>y+150&&b<=lim).pop()||lim);if(end<=y)end=lim;
+    const pc=document.createElement('canvas');pc.width=W*2;pc.height=PH*2;const cx=pc.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,pc.width,pc.height);
+    cx.drawImage(cv,0,y*2,W*2,(end-y)*2,0,M*2,W*2,(end-y)*2);pages.push(pc.toDataURL('image/jpeg',0.92));y=end}
+  sh.innerHTML='';return pages}
+async function pdfPrepare(){const pg=await makePages();if(pg)PG=pg;return pg}
+async function pdfPreview(){$('pv').hidden=false;$('pv-body').innerHTML='<div class="spin">در حال ساخت گزارش...</div>';
+  try{const pg=await pdfPrepare();if(!pg){$('pv').hidden=true;return}
+    $('pv-body').innerHTML=pg.map((p,i)=>`<img src="${p}" alt="صفحه ${fa(i+1)}">`).join('')}catch(e){$('pv').hidden=true;toast('ساخت پیش‌نمایش انجام نشد')}}
+async function pdfDownload(){try{const pg=$('pv').hidden?await pdfPrepare():(PG||await pdfPrepare());if(!pg)return;
+  const doc=new window.jspdf.jsPDF({unit:'pt',format:'a4',orientation:'portrait'});
+  pg.forEach((p,i)=>{if(i)doc.addPage();doc.addImage(p,'JPEG',0,0,595.28,841.89)});
+  const{id,from,to}=repArgs();await saveFile(`karkard-${id?(emp(id)?.name||'emp'):'all'}-${from}_${to}.pdf`,doc.output('blob'),'application/pdf')}catch(e){toast('ساخت PDF انجام نشد')}}
+/* ---- render all ---- */
+function renderAll(){PG=null;renderStats();renderWork();renderPays();renderEmps();renderPlaces();empOpts($('r-emp'),true);placeOpts($('r-place'),true);renderReport()}
+/* ---- events ---- */
+const armed=(b)=>{if(b.dataset.armed){delete b.dataset.armed;return true}b.dataset.armed=1;const t=b.textContent;b.textContent='مطمئنید؟';setTimeout(()=>{if(b.dataset.armed){delete b.dataset.armed;b.textContent=t}},3000);return false};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act],[data-tab]');if(!b)return;
+  if(b.dataset.tab){document.querySelectorAll('#nav button').forEach(x=>x.setAttribute('aria-selected',x===b));
+    document.querySelectorAll('main>section').forEach(s=>s.hidden=s.id!=='tab-'+b.dataset.tab);if(b.dataset.tab==='rep')renderReport();return}
+  const a=b.dataset.act,id=b.dataset.id;
+  if(a==='saveWork'){const eid=$('w-emp').value;if(!eid){toast('ابتدا کارمند را انتخاب کنید');return}
+    const date=dpGet('wdp'),rec={id:uid(),emp:eid,date,worked:$('w-worked').checked,wage:num($('w-wage').value),ot:num($('w-ot').value),place:$('w-place').value,note:$('w-note').value.trim()};
+    const i=S.days.findIndex(x=>x.emp===eid&&x.date===date);if(i>=0){rec.id=S.days[i].id;S.days[i]=rec}else S.days.push(rec);
+    persist();renderWork();renderEmps();renderPays();$('w-msg').textContent='ثبت شد.';toast('کارکرد '+fmtD(date)+' ثبت شد')}
+  else if(a==='editDay'){const r=S.days.find(x=>x.id===id);$('w-emp').value=r.emp;dpSet('wdp',r.date);loadWork();scrollTo({top:0,behavior:'smooth'})}
+  else if(a==='delDay'){if(!armed(b))return;S.days=S.days.filter(x=>x.id!==id);persist();renderAll()}
+  else if(a==='savePay'){const eid=$('p-emp').value,amt=num($('p-amt').value);if(!eid||amt<=0){toast('کارمند و مبلغ را وارد کنید');return}
+    S.pays.push({id:uid(),emp:eid,date:dpGet('pdp'),amount:amt,note:$('p-note').value.trim()});$('p-amt').value='';$('p-note').value='';persist();renderAll();toast('دریافتی ثبت شد')}
+  else if(a==='delPay'){if(!armed(b))return;S.pays=S.pays.filter(x=>x.id!==id);persist();renderAll()}
+  else if(a==='saveEmp'){const name=$('e-name').value.trim();if(!name){toast('نام کارمند را وارد کنید');return}
+    const rec={id:$('e-id').value||uid(),name,phone:$('e-phone').value.trim(),wage:num($('e-wage').value),credit:num($('e-credit').value),debt:num($('e-debt').value)};
+    const i=S.emps.findIndex(x=>x.id===rec.id);if(i>=0)S.emps[i]=rec;else S.emps.push(rec);clearEmpForm();persist();renderAll();toast('کارمند ذخیره شد')}
+  else if(a==='editEmp'){const r=emp(id);$('e-id').value=r.id;$('e-name').value=r.name;$('e-phone').value=r.phone||'';$('e-wage').value=fmtIn(r.wage);$('e-credit').value=fmtIn(r.credit);$('e-debt').value=fmtIn(r.debt);
+    $('e-head').textContent='ویرایش '+r.name;$('e-cancel').hidden=false;scrollTo({top:0,behavior:'smooth'})}
+  else if(a==='cancelEmp')clearEmpForm();
+  else if(a==='delEmp'){if(!armed(b))return;S.emps=S.emps.filter(x=>x.id!==id);S.days=S.days.filter(x=>x.emp!==id);S.pays=S.pays.filter(x=>x.emp!==id);persist();renderAll()}
+  else if(a==='addPlace'){const n=$('pl-name').value.trim();if(!n)return;if(!S.places.includes(n))S.places.push(n);$('pl-name').value='';persist();renderAll()}
+  else if(a==='delPlace'){if(!armed(b))return;S.places.splice(+id,1);persist();renderAll()}
+  else if(a==='exportCsv'){const{id:i,from,to}=repArgs();saveFile(`karkard-${i?'':'all-'}${from}_${to}.csv`,repCsv(),'text/csv;charset=utf-8')}
+  else if(a==='copyRep')copyText(repText());
+  else if(a==='previewPdf')pdfPreview();
+  else if(a==='pdfDl')pdfDownload();
+  else if(a==='pvClose')$('pv').hidden=true;
+  else if(a==='backup')saveFile('maral-backup-'+jstr(...nowJ())+'.json',JSON.stringify(S),'application/json')});
+document.addEventListener('change',e=>{const t=e.target.id;
+  if(t==='w-emp'){const x=emp($('w-emp').value);if(x)$('w-wage').value=fmtIn(x.wage);loadWork();renderWork()}
+  else if(t==='w-worked')prevWork();
+  else if(t==='p-emp')renderPays();
+  else if(t==='r-emp'||t==='r-place')renderReport();
+  else if(t==='s-hours'||t==='s-coef'||t==='s-unit'){S.set.hours=num($('s-hours').value)||8;S.set.coef=num($('s-coef').value)||1;S.set.unit=$('s-unit').value;persist();renderAll()}
+  else if(t==='restore'){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);if(!Array.isArray(j.emps))throw 0;S=norm(j);persist();renderAll();toast('اطلاعات بازیابی شد')}catch(_){toast('فایل پشتیبان معتبر نیست')}};rd.readAsText(f);e.target.value=''}});
+document.addEventListener('dpchange',e=>{const id=e.target.id;if(id==='wdp'){loadWork()}else if(id==='rfrom'||id==='rto')renderReport()});
+document.addEventListener('input',e=>{const t=e.target;if(t.classList.contains('money')){const d=t.value.replace(/[^\d۰-۹٠-٩]/g,'');t.value=d?num(d).toLocaleString('en-US'):''}
+  if(t.id==='w-wage'||t.id==='w-ot')prevWork()});
+/* ---- boot ---- */
+document.querySelectorAll('[data-dp]').forEach(buildDP);
+{const[y,m]=nowJ();dpSet('rfrom',jstr(y,m,1))}
+renderAll();loadWork();
+(async()=>{try{const db=await window.claude?.use?.('db');if(!db)return;dbDoc=db.doc('app/data');const s=await dbDoc.get();
+  if(s.exists&&s.data()&&s.data().json){S=norm(JSON.parse(s.data().json));try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(_){}renderAll();loadWork()}
+  else if(S.emps.length)persist()}catch(e){}})();
+</script>
+
+</body></html>
