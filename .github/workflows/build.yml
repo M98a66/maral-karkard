@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
 env:
   KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
+  KS_B64: ${{ secrets.KEYSTORE_BASE64 }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,14 +29,10 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
-      - name: Build debug APK
+      - name: Prepare signing key
+        if: env.KS_PASS != '' && env.KS_B64 != ''
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
-      - name: Sign release
-        if: env.KS_PASS != '' && hashFiles('release.keystore') != ''
-        run: |
+          echo "$KS_B64" | base64 -d > release.keystore
           python3 - <<'PY'
           p='android/app/build.gradle'
           s=open(p).read()
@@ -48,11 +45,15 @@ jobs:
               }
           }
           '''
-          s=s.replace("    buildTypes {",sc+"    buildTypes {",1)
+          s=s.replace("    buildTypes {",sc+"    buildTypes {\n        debug {\n            signingConfig signingConfigs.release\n        }",1)
           s=s.replace("        release {\n            minifyEnabled false","        release {\n            signingConfig signingConfigs.release\n            minifyEnabled false",1)
           open(p,'w').write(s)
           PY
-          cd android && ./gradlew assembleRelease bundleRelease
+      - name: Build
+        run: |
+          cd android
+          chmod +x gradlew
+          if [ -n "$KS_PASS" ] && [ -n "$KS_B64" ]; then ./gradlew assembleDebug assembleRelease bundleRelease; else ./gradlew assembleDebug; fi
       - uses: actions/upload-artifact@v4
         with:
           name: maral-android
