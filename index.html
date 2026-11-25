@@ -4,6 +4,10 @@
 
 <script src="lib/html2canvas.min.js"></script>
 <script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/firebase-app-compat.js"></script>
+<script src="lib/firebase-auth-compat.js"></script>
+<script src="lib/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
 <style>
 @font-face{font-family:'Vazirmatn';font-weight:400;font-display:swap;src:url(lib/vazirmatn-arabic-400-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+200C-200E,U+FB50-FDFF,U+FE70-FEFF}
 @font-face{font-family:'Vazirmatn';font-weight:400;font-display:swap;src:url(lib/vazirmatn-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
@@ -347,6 +351,11 @@ details summary{padding:6px 0}
     <p class="muted">نرخ‌ها طبق اطلاعات منتشرشده برای ۱۴۰۵ وارد شده‌اند و قابل ویرایش‌اند. مالیات: معافیت ۴۰ میلیون تومان در ماه و نرخ‌های پلکانی ۱۰ تا ۳۰ درصد. پیش از استفاده رسمی با ادارهٔ کار یا حسابدار تطبیق دهید.</p>
     <button class="btn del sm" data-act="lawReset">بازگشت به مقادیر پیش‌فرض</button>
   </div>
+  <div class="card" id="acct-card">
+    <h2>حساب کاربری و همگام‌سازی</h2>
+    <p class="muted" id="acct">ورود به حساب فعال نیست؛ اطلاعات فقط روی همین گوشی است.</p>
+    <div class="row"><button class="btn" data-act="auOpen">ورود / ثبت‌نام</button><button class="btn alt" data-act="auSync">همگام‌سازی اکنون</button><button class="btn del" data-act="auOut">خروج از حساب</button></div>
+  </div>
   <div class="card">
     <h2>رمز ورود</h2>
     <div class="row"><input id="pin-in" type="password" inputmode="numeric" placeholder="رمز جدید (خالی = حذف)" style="flex:1 1 180px;width:auto"><button class="btn" data-act="setPin">ذخیره رمز</button></div>
@@ -366,6 +375,12 @@ details summary{padding:6px 0}
 </main>
 </div>
 <div id="toast" role="status"></div>
+<div id="auth" class="lock" hidden><div style="max-height:92vh;overflow:auto"><b style="font-size:18px">ورود به حسابداری کار مارال</b><span class="muted">با ورود، اطلاعات شما روی هر گوشی در دسترس است.</span>
+  <input id="au-phone" type="tel" inputmode="tel" placeholder="شماره موبایل، مثلاً 09123456789"><button class="btn" data-act="auSend">ارسال کد پیامکی</button>
+  <div id="au-step2" hidden style="display:flex;flex-direction:column;gap:8px"><input id="au-code" inputmode="numeric" placeholder="کد تأیید"><button class="btn amber" data-act="auVerify">تأیید و ورود</button></div>
+  <div class="muted">یا</div><button class="btn alt" data-act="auGoogle">ورود با حساب Google</button>
+  <span id="au-msg" class="muted"></span><div id="au-rc"></div>
+  <button class="btn alt sm" data-act="auSkip">ادامه بدون ورود (فقط روی همین گوشی)</button></div></div>
 <div id="lock" class="lock" hidden><div><b>حسابداری کار مارال</b><input id="lock-in" type="password" inputmode="numeric" placeholder="رمز ورود"><button class="btn" data-act="unlock">ورود</button><span class="neg" id="lock-msg"></span></div></div>
 <div id="pdf-sheet" aria-hidden="true"></div>
 <div id="pv" class="pv" hidden><div class="pv-bar"><b>پیش‌نمایش PDF</b><div class="row"><button class="btn amber sm" data-act="pdfModalDl">دانلود PDF</button><button class="btn alt sm" data-act="pvClose">بستن</button></div></div><div class="pv-body" id="pv-body"></div></div>
@@ -533,11 +548,11 @@ function prjCsv(){const d=prjData();const q=v=>'"'+String(v).replace(/"/g,'""')+
   R.push([],['دریافت',d.inn],['هزینه',d.out],['هزینه کارگری',Math.round(d.labor)]);return'﻿'+R.map(x=>x.map(q).join(',')).join('\r\n')}
 /* ---- state ---- */
 let S={emps:[],places:[],days:[],pays:[],projects:[],logs:[],pfin:[],staff:[],law:Object.assign({},LAW0),set:{hours:8,coef:1.4,unit:'تومان'}};
-const norm=j=>({emps:j.emps||[],places:j.places||[],days:j.days||[],pays:j.pays||[],projects:j.projects||[],logs:j.logs||[],pfin:j.pfin||[],staff:j.staff||[],law:Object.assign({},LAW0,j.law||{}),set:Object.assign({hours:8,coef:1.4,unit:'تومان',company:'',pin:''},j.set||{})});
+const norm=j=>({emps:j.emps||[],places:j.places||[],days:j.days||[],pays:j.pays||[],projects:j.projects||[],logs:j.logs||[],pfin:j.pfin||[],staff:j.staff||[],upd:j.upd||0,law:Object.assign({},LAW0,j.law||{}),set:Object.assign({hours:8,coef:1.4,unit:'تومان',company:'',pin:''},j.set||{})});
 try{const l=localStorage.getItem('maral-acc');if(l)S=norm(JSON.parse(l))}catch(e){}
 let dbDoc=null,saveT=null;
-function persist(){try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(e){}
-  clearTimeout(saveT);saveT=setTimeout(()=>{if(dbDoc)dbDoc.set({json:JSON.stringify(S),at:Date.now()}).catch(()=>{})},400)}
+function persist(){S.upd=Date.now();try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(e){}
+  clearTimeout(saveT);saveT=setTimeout(()=>{if(typeof cloudPush==='function')cloudPush();if(dbDoc)dbDoc.set({json:JSON.stringify(S),at:Date.now()}).catch(()=>{})},400)}
 const U=()=>S.set.unit;
 const emp=id=>S.emps.find(e=>e.id===id);
 const dayPay=r=>{const base=r.worked?r.wage:0;const ot=(r.ot||0)*(r.wage/(S.set.hours||8))*S.set.coef;return{base,ot}};
@@ -789,12 +804,38 @@ $('pv').querySelector('.row').insertAdjacentHTML('beforeend','<button class="btn
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="imgModalDl"]');if(b)imgDownload()});
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.o){SLOPT[t.dataset.o].on=t.checked;renderOpts();renderSlip()}});
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset&&t.dataset.ov){SLOPT[t.dataset.ov].v=t.value;renderSlip()}});
+/* ---- cloud auth and sync (needs firebase-config.js) ---- */
+let FBU=null,FBdb=null,CR=null,RC=null;
+const hasFB=()=>!!(window.FB_CONFIG&&window.FB_CONFIG.apiKey&&window.firebase);
+const auMsg=(t,bad)=>{const m=$('au-msg');m.textContent=t;m.className=bad?'neg':'muted'};
+async function cloudPush(){if(!FBU||!FBdb)return;try{await FBdb.collection('users').doc(FBU.uid).set({json:JSON.stringify(S),at:S.upd||Date.now()})}catch(e){toast('همگام‌سازی انجام نشد؛ اینترنت را بررسی کنید')}}
+async function cloudPull(){if(!FBU||!FBdb)return;const d=await FBdb.collection('users').doc(FBU.uid).get();
+  if(d.exists&&d.data().json){const cu=d.data().at||0;if(cu>(S.upd||0)){S=norm(JSON.parse(d.data().json));S.upd=cu;try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(_){}renderAll();loadWork();toast('اطلاعات از حساب شما بارگذاری شد');return}}
+  await cloudPush()}
+function acctText(){$('acct').textContent=FBU?('وارد شده با: '+(FBU.phoneNumber||FBU.email||FBU.displayName||'حساب')+' — اطلاعات همگام می‌شود.'):(hasFB()?'ورود به حساب فعال نیست؛ اطلاعات فقط روی همین گوشی است.':'ورود به حساب در این نسخه تنظیم نشده است.')}
+function initAuth(){acctText();if(!hasFB())return;
+  try{firebase.initializeApp(window.FB_CONFIG);FBdb=firebase.firestore();try{FBdb.enablePersistence({synchronizeTabs:false}).catch(()=>{})}catch(_){}
+    firebase.auth().onAuthStateChanged(async u=>{FBU=u;acctText();if(u){$('auth').hidden=true;try{await cloudPull()}catch(e){toast('خواندن اطلاعات ابری انجام نشد')}}else{let sk=false;try{sk=localStorage.getItem('maral-skip')==='1'}catch(_){}$('auth').hidden=sk}});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&FBU)cloudPull().catch(()=>{})})}catch(e){toast('راه‌اندازی ورود انجام نشد')}}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act;
+  if(a==='auOpen'){if(!hasFB()){toast('ابتدا Firebase را در برنامه تنظیم کنید');return}try{localStorage.removeItem('maral-skip')}catch(_){}$('auth').hidden=false}
+  else if(a==='auSkip'){try{localStorage.setItem('maral-skip','1')}catch(_){}$('auth').hidden=true}
+  else if(a==='auSend'){let p=$('au-phone').value.replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[\s-]/g,'');let full;
+    if(p.startsWith('+'))full=p;else{p=p.replace(/\D/g,'');if(p.startsWith('00'))p=p.slice(2);if(p.startsWith('98'))p=p.slice(2);if(p.startsWith('0'))p=p.slice(1);full='+98'+p;if(!/^\+989\d{9}$/.test(full)){auMsg('شماره موبایل را درست وارد کنید (مثلاً 09123456789)',1);return}}
+    try{if(!RC)RC=new firebase.auth.RecaptchaVerifier('au-rc',{size:'invisible'});auMsg('در حال ارسال کد...');CR=await firebase.auth().signInWithPhoneNumber(full,RC);$('au-step2').hidden=false;auMsg('کد پیامک‌شده را وارد کنید.')}
+    catch(err){auMsg('ارسال کد انجام نشد ('+(err.code||err.message)+')',1);try{RC&&RC.clear()}catch(_){}RC=null}}
+  else if(a==='auVerify'){try{await CR.confirm($('au-code').value.trim().replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)))}catch(err){auMsg('کد اشتباه است یا منقضی شده.',1)}}
+  else if(a==='auGoogle'){try{const C=window.Capacitor,N=C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.FirebaseAuthentication;
+    if(N){const r=await N.signInWithGoogle({skipNativeAuth:true});await firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(r.credential.idToken))}else await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())}
+    catch(err){auMsg('ورود با Google انجام نشد ('+(err.code||err.message)+')',1)}}
+  else if(a==='auSync'){if(!FBU){toast('ابتدا وارد حساب شوید');return}try{await cloudPull();await cloudPush();toast('همگام‌سازی شد')}catch(_){toast('همگام‌سازی انجام نشد')}}
+  else if(a==='auOut'){if(!FBU){toast('وارد حساب نیستید');return}try{await firebase.auth().signOut();toast('از حساب خارج شدید')}catch(_){}}});
 /* ---- boot ---- */
 document.querySelectorAll('[data-dp]').forEach(buildDP);
 {const[y,m]=nowJ();dpSet('rfrom',jstr(y,m,1));dpSet('prfrom',jstr(y,1,1));dpSet('pyfrom',jstr(y,m,1));
  $('st-shift').innerHTML=SHIFTS.map(x=>`<option value="${x.id}">${x.n}</option>`).join('');
  $('sl-m').innerHTML=MN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('sl-y').innerHTML=[y-3,y-2,y-1,y,y+1].map(v=>`<option value="${v}">${fa(v)}</option>`).join('');$('sl-m').value=m;$('sl-y').value=y;}
-stForm();renderItems();renderOpts();if(S.set.pin)$('lock').hidden=false;
+stForm();renderItems();renderOpts();initAuth();if(S.set.pin)$('lock').hidden=false;
 renderAll();loadWork();
 (async()=>{try{const db=await window.claude?.use?.('db');if(!db)return;dbDoc=db.doc('app/data');const s=await dbDoc.get();
   if(s.exists&&s.data()&&s.data().json){S=norm(JSON.parse(s.data().json));try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(_){}renderAll();loadWork()}

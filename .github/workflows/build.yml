@@ -22,12 +22,14 @@ jobs:
       - name: Prepare web files
         run: |
           mkdir -p www/lib
-          cp index.html www/
+          cp index.html firebase-config.js www/
+          cp node_modules/firebase/firebase-{app,auth,firestore}-compat.js www/lib/
           cp node_modules/html2canvas/dist/html2canvas.min.js node_modules/jspdf/dist/jspdf.umd.min.js www/lib/
           cp node_modules/@fontsource/vazirmatn/files/vazirmatn-{arabic,latin}-{400,500,700}-normal.woff2 www/lib/
       - name: Add Android
         run: |
           npx cap add android
+          [ -f google-services.json ] && cp google-services.json android/app/ || true
           npx cap sync android
       - name: Prepare signing key
         if: env.KS_PASS != '' && env.KS_B64 != ''

@@ -1,1 +1,17 @@
-{"appId":"ir.maral.karkard","appName":"حسابداری کار مارال","webDir":"www","android":{"allowMixedContent":false}}
+{
+ "appId": "ir.maral.karkard",
+ "appName": "حسابداری کار مارال",
+ "webDir": "www",
+ "android": {
+  "allowMixedContent": false
+ },
+ "plugins": {
+  "FirebaseAuthentication": {
+   "skipNativeAuth": true,
+   "providers": [
+    "google.com",
+    "phone"
+   ]
+  }
+ }
+}
