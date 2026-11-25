@@ -2,6 +2,8 @@ name: Build Android
 on:
   push:
   workflow_dispatch:
+env:
+  KS_PASS: ${{ secrets.KEYSTORE_PASSWORD }}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +28,13 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
-      - name: Signing
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+      - name: Sign release
+        if: env.KS_PASS != '' && hashFiles('release.keystore') != ''
         run: |
           python3 - <<'PY'
           p='android/app/build.gradle'
@@ -34,9 +42,9 @@ jobs:
           sc='''    signingConfigs {
               release {
                   storeFile file("../../release.keystore")
-                  storePassword "77bf6e6ef38220ef"
+                  storePassword System.getenv("KS_PASS")
                   keyAlias "maral"
-                  keyPassword "77bf6e6ef38220ef"
+                  keyPassword System.getenv("KS_PASS")
               }
           }
           '''
@@ -44,14 +52,11 @@ jobs:
           s=s.replace("        release {\n            minifyEnabled false","        release {\n            signingConfig signingConfigs.release\n            minifyEnabled false",1)
           open(p,'w').write(s)
           PY
-      - name: Build
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew assembleRelease bundleRelease
+          cd android && ./gradlew assembleRelease bundleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: maral-android
           path: |
+            android/app/build/outputs/apk/debug/*.apk
             android/app/build/outputs/apk/release/*.apk
             android/app/build/outputs/bundle/release/*.aab
