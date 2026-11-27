@@ -181,6 +181,13 @@ section,.pane{animation:up .25s ease}
 .dev-links{display:flex;gap:10px;justify-content:center}
 .dev-links a{text-decoration:none;flex:1;max-width:160px;text-align:center}
 @media (max-width:520px){.sum{grid-template-columns:1fr 1fr}.sum b{font-size:15px}.sum .final{grid-column:1/-1}}
+.calh,.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.calh span{text-align:center;font-size:12px;color:var(--muted);padding:2px 0}
+.cd{position:relative;border-radius:10px;background:var(--soft);padding:3px 0;text-align:center;line-height:1.25;border:1.5px solid transparent;min-width:0}
+.cd b{display:block;font-size:11px;color:var(--muted)}.cd span{font-size:17px}.cd small{display:block;font-size:10px;color:var(--muted)}
+.cd.am{background:color-mix(in srgb,#f5a524 20%,var(--surface))}.cd.pm{background:color-mix(in srgb,#e0782a 22%,var(--surface))}.cd.nt{background:color-mix(in srgb,#4a5fd0 24%,var(--surface))}.cd.off{opacity:.55}
+.cd.fr{border-color:var(--bad)}.cd.ho{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok)}
+.cd em{position:absolute;top:1px;left:3px;font-style:normal;font-size:10px;font-weight:700;color:var(--bad)}
 </style>
 
 
@@ -397,7 +404,7 @@ section,.pane{animation:up .25s ease}
       <div class="field"><label for="sl-staff">پرسنل</label><select id="sl-staff"></select></div>
       <div class="field"><label>ماه و سال</label><div class="dp"><select id="sl-m"></select><select id="sl-y"></select></div></div>
       <div class="field"><label for="sl-shift">🕒 نوع شیفت کاری</label><select id="sl-shift"></select></div>
-      <div data-dp="slcyc" data-label="شروع چرخه شیفت (روز اول کار)"></div>
+      <div data-dp="slcyc" data-label="📅 شروع شیفت (تاریخ شمسی روز اول چرخه)"></div>
       <div class="field"><label for="sl-hw">🎌 کار در تعطیلات رسمی ماه</label><select id="sl-hw"><option value="auto">خودکار (شیفت گردشی: کار کرده)</option><option value="yes">کار کرده (طبق شیفت)</option><option value="no">کار نکرده</option></select></div>
       <div class="field"><label for="sl-abs">روز غیبت / مرخصی بدون حقوق</label><input id="sl-abs" inputmode="numeric" value="0"></div>
       <div class="field"><label for="sl-ot">اضافه‌کار دستی، علاوه بر محاسبه خودکار (ساعت)</label><input id="sl-ot" inputmode="decimal" value="0"></div>
@@ -592,6 +599,13 @@ const SLIPOPT=[
  {k:'adv',n:'مساعده',t:'d',u:'مبلغ'},{k:'loan',n:'قسط وام',t:'d',u:'مبلغ'},{k:'fine',n:'جریمه / کسر غیبت',t:'d',u:'مبلغ'},{k:'coop',n:'صندوق تعاون / قرض‌الحسنه',t:'d',u:'مبلغ'},{k:'supp',n:'بیمه تکمیلی (سهم کارگر)',t:'d',u:'مبلغ'}];
 let SLOPT={};SLIPOPT.forEach(o=>SLOPT[o.k]={on:false,v:o.d||''});
 function renderOpts(){$('sl-opts').innerHTML=SLIPOPT.map(o=>{const x=SLOPT[o.k];return`<div class="opt"><label class="tick"><input type="checkbox" data-o="${o.k}"${x.on?' checked':''}> ${o.n}${o.t==='d'?' <small class="muted">(کسر)</small>':''}</label>${x.on?`<input data-ov="${o.k}"${o.m==='amt'||o.t==='d'?' class="money"':''} inputmode="decimal" placeholder="${o.u}" value="${esc(x.v)}">`:''}</div>`}).join('')}
+function shType(r){if(!r[2])return{i:'💤',n:'استراحت',k:'off'};const h=r[3];return h>=6&&h<12?{i:'☀️',n:'صبح',k:'am'}:h>=12&&h<18?{i:'🌆',n:'عصر',k:'pm'}:{i:'🌙',n:'شب',k:'nt'}}
+function shiftCal(c,y,m){if(!c.sh)return'';const dl=c.M.dl,cnt={am:0,pm:0,nt:0,off:0};let fd=0,fh=0,hd=0,hh=0;
+  const cells=dl.map(r=>{const t=shType(r),fri=r[1]===5,hol=isHol(y,m,r[0]);cnt[t.k]++;if(r[2]&&fri){fd++;fh+=r[2]}if(r[2]&&hol&&!fri){hd++;hh+=r[2]}
+    return`<div class="cd ${t.k}${fri?' fr':''}${hol?' ho':''}"><b>${fa(r[0])}</b><span>${hol?'🎌':t.i}</span><small>${r[2]?fa(r[2])+'س':'—'}</small>${r[2]&&fri?'<em>ج</em>':''}</div>`});
+  const off=(dl[0][1]+1)%7;return`<h3 style="margin-top:16px">🗓️ تقویم شیفت ${MN[m-1]} ${fa(y)}</h3><div class="calh">${['ش','ی','د','س','چ','پ','ج'].map(x=>`<span>${x}</span>`).join('')}</div><div class="cal">${'<div></div>'.repeat(off)}${cells.join('')}</div>
+  <div class="chips" style="margin-top:10px;pointer-events:none"><button>☀️ صبح</button><button>🌆 عصر</button><button>🌙 شب</button><button>💤 استراحت</button><button>🎌 تعطیل رسمی</button><button>ج = جمعه‌کاری</button></div>
+  <div class="sum"><div><small>☀️ روز صبح</small><b>${fa(cnt.am)}</b></div><div><small>🌆 روز عصر</small><b>${fa(cnt.pm)}</b></div><div><small>🌙 روز شب‌کار</small><b>${fa(cnt.nt)}</b></div><div><small>💤 روز استراحت</small><b>${fa(cnt.off)}</b></div><div><small>🗓️ جمعه‌کاری</small><b>${fa(fd)} روز · ${hrs(fh)} ساعت</b></div><div><small>🎌 تعطیل‌کاری</small><b>${fa(hd)} روز · ${hrs(hh)} ساعت</b></div><div><small>⏳ اضافه‌کار ماه</small><b>${hrs(c.ot)} ساعت</b></div><div><small>🌙 ساعت شب‌کاری</small><b>${hrs(c.M.night)}</b></div></div>`}
 function shiftTbl(c){if(!c.sh)return'';return`<details style="margin-top:12px"><summary class="muted" style="cursor:pointer">جدول شیفت این ماه (${fa(c.M.wd)} روز کار)</summary><div class="tw"><table><tr><th>روز</th><th>هفته</th><th>ساعت کار</th><th>شروع</th></tr>${c.M.dl.map(r=>`<tr><td>${fa(r[0])}</td><td>${WD[r[1]]}</td><td>${r[2]?fa(r[2]):'استراحت'}</td><td>${r[2]?fa(p2(r[3]))+':۰۰':'—'}</td></tr>`).join('')}</table></div></details>`}
 const stf=id=>S.staff.find(x=>x.id===id);
 function slipHtml(st,y,m,c){const u=U(),hd=st.hire?fmtD(st.hire):'—';
@@ -612,7 +626,7 @@ function renderSlip(){const o=$('sl-out'),x=slipCur(1);if(!x){o.innerHTML='<div 
   const{c}=x,t=a=>a.map(r=>`<tr><td>${esc(r.n)}</td><td>${money(r.a)}</td></tr>`).join('');
   o.innerHTML=`<div class="sum"><div><small>جمع مزایا</small><b>${money(c.gross)}</b></div><div><small>کسورات</small><b>${money(c.ded)}</b></div><div><small>مشمول بیمه</small><b>${money(c.insb)}</b></div><div><small>سهم کارفرما + بیکاری</small><b>${money(c.eI+c.uI)}</b></div><div class="final"><small>خالص قابل پرداخت (${U()})</small><b>${money(c.net)}</b></div></div>
   <div class="tw"><table><tr><th>شرح</th><th>مبلغ</th></tr>${t(c.R)}${c.D.map(r=>`<tr><td class="neg">− ${esc(r.n)}</td><td class="neg">${money(r.a)}</td></tr>`).join('')}</table></div>
-  ${c.sh?`<h3 style="margin-top:14px">⏱️ محاسبه خودکار ساعات ماه (شیفت: ${esc(c.sh.n)})</h3><div class="sum"><div><small>📅 روز کار شیفت</small><b>${fa(c.M.wd)}</b></div><div><small>🕒 جمع ساعت کار</small><b>${hrs(c.M.hr)}</b></div><div><small>📏 ساعت موظفی ماه</small><b>${hrs(c.legal)}</b></div><div><small>⏳ اضافه‌کار خودکار</small><b>${hrs(c.otA)}</b></div><div><small>🗓️ جمعه‌کاری خودکار</small><b>${hrs(c.M.fri)}</b></div><div><small>🎌 تعطیل رسمی (${fa(c.M.holD)} روز)</small><b>${hrs(c.hH)} ساعت کار</b></div><div><small>🌙 شب‌کاری</small><b>${hrs(c.M.night)}</b></div></div>`:''}${shiftTbl(c)}`}
+  ${c.sh?`<h3 style="margin-top:14px">⏱️ محاسبه خودکار ساعات ماه (شیفت: ${esc(c.sh.n)})</h3><div class="sum"><div><small>📅 روز کار شیفت</small><b>${fa(c.M.wd)}</b></div><div><small>🕒 جمع ساعت کار</small><b>${hrs(c.M.hr)}</b></div><div><small>📏 ساعت موظفی ماه</small><b>${hrs(c.legal)}</b></div><div><small>⏳ اضافه‌کار خودکار</small><b>${hrs(c.otA)}</b></div><div><small>🗓️ جمعه‌کاری خودکار</small><b>${hrs(c.M.fri)}</b></div><div><small>🎌 تعطیل رسمی (${fa(c.M.holD)} روز)</small><b>${hrs(c.hH)} ساعت کار</b></div><div><small>🌙 شب‌کاری</small><b>${hrs(c.M.night)}</b></div></div>`:''}${shiftCal(x.c&&x.y?x.c:c,x.y,x.m)}${shiftTbl(c)}`}
 function renderItems(){$('sl-items').innerHTML=SLIPITEMS.length?SLIPITEMS.map((it,i)=>`<div class="grid" style="margin-bottom:6px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"><select data-i="${i}" data-k="t"><option value="e1"${it.t==='e1'?' selected':''}>مزایا (مشمول)</option><option value="e0"${it.t==='e0'?' selected':''}>مزایا (معاف)</option><option value="d"${it.t==='d'?' selected':''}>کسر</option></select><input data-i="${i}" data-k="n" placeholder="شرح" value="${esc(it.n||'')}"><input class="money" data-i="${i}" data-k="a" inputmode="decimal" placeholder="مبلغ" value="${esc(it.a||'')}"><button class="btn del sm" data-act="delItem" data-id="${i}">حذف</button></div>`).join(''):'<div class="muted">ردیفی اضافه نشده است.</div>'}
 function renderStaff(){const sel=$('sl-staff'),cur=sel.value;sel.innerHTML=S.staff.length?S.staff.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join(''):'<option value="">پرسنلی ثبت نشده</option>';if([...sel.options].some(o=>o.value===cur))sel.value=cur;
   $('st-list').innerHTML=S.staff.length?S.staff.map(s=>{const sh=SHIFTS.find(x=>x.id===s.shift);return`<div class="item"><span class="avatar">${esc(s.name.trim()[0]||'؟')}</span><div class="t"><b>${esc(s.name)}</b> <span class="muted">${esc(s.co||s.pos||'')}${s.phone?' · '+fa(esc(s.phone)):''}</span><div class="muted">مزد روزانه ${money(s.daily||S.law.daily)} ${U()} · ${esc(sh?sh.n:'بدون شیفت')}</div></div><div class="row"><button class="btn alt sm" data-act="editStaff" data-id="${s.id}">ویرایش</button><button class="btn del sm" data-act="delStaff" data-id="${s.id}">حذف</button></div></div>`}).join(''):'<div class="empty">پرسنلی ثبت نشده است.</div>';renderSlip()}
