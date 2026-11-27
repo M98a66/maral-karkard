@@ -144,25 +144,69 @@ header{transition:background .3s}
 .opt{display:flex;flex-direction:column;gap:6px}
 .opt .tick{margin-bottom:0;width:100%}
 details summary{padding:6px 0}
+
+body{font-size:var(--fs,15px)}
+.logo{background:none;border:0;overflow:hidden}.logo img{width:100%;height:100%;display:block;border-radius:14px}
+header{position:relative;overflow:hidden}
+header::after{content:"";position:absolute;inset:auto auto -60px -40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+header::before{content:"";position:absolute;inset:-70px -50px auto auto;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hd{position:relative;z-index:1}
+nav#nav{background:color-mix(in srgb,var(--surface) 90%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+nav#nav button i{font-style:normal;font-size:21px;line-height:1.1;display:block;transition:transform .15s}
+nav#nav button[aria-selected="true"] i{transform:translateY(-2px) scale(1.12)}
+.card{border:1px solid var(--line)}
+section,.pane{animation:up .25s ease}
+@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.pane{display:flex;flex-direction:column;gap:16px}
+.seg{display:flex;gap:6px;background:var(--surface);padding:5px;border-radius:16px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.seg button{flex:1;font:inherit;font-size:14px;border:0;background:none;color:var(--muted);padding:9px 6px;border-radius:12px;cursor:pointer;white-space:nowrap}
+.seg button[aria-selected="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.qa{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.qa button{font:inherit;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 6px;border:1px solid var(--line);border-radius:20px;background:var(--surface);color:var(--fg);cursor:pointer;box-shadow:var(--shadow);font-size:13px;font-weight:700}
+.qa button i{font-style:normal;font-size:28px}
+.qa button:active{transform:scale(.96)}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.sw button{width:40px;height:40px;border-radius:50%;border:3px solid var(--surface);box-shadow:0 0 0 1.5px var(--line);cursor:pointer}
+.sw button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--fg)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chips button{font:inherit;font-size:13px;border:0;border-radius:999px;padding:7px 14px;background:var(--soft);color:var(--fg);cursor:pointer}
+.chips button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent);font-weight:700}
+.stat{border:1px solid var(--line)}
+.pk{margin-top:4px;align-self:flex-start}
 </style>
 
 
 </head><body>
 <div class="wrap" lang="fa">
-<header><div class="hd"><div class="brand"><div class="logo">م</div><div><h1>حسابداری کار مارال</h1><p id="sub">ثبت کارکرد روزانه و گزارش</p></div></div></div></header>
+<header><div class="hd"><div class="brand"><div class="logo"><img alt="" src="data:image/png;base64,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"></div><div><h1>حسابداری کار مارال ✨</h1><p id="sub">ثبت کارکرد روزانه و گزارش</p></div></div></div></header>
 <div class="stats" id="stats"></div>
 <nav role="tablist" id="nav">
-    <button data-tab="work" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="m9 15 2 2 4-4"/></svg><span>کارکرد</span></button>
-    <button data-tab="pay" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><path d="M3 7v11a2 2 0 0 0 2 2h15V9H5a2 2 0 0 1-2-2z"/><path d="M16 14h2"/></svg><span>دریافتی</span></button>
-    <button data-tab="emp" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><path d="M16 5.2a3 3 0 0 1 0 5.6M18 14.8c2 .6 3.4 2.3 3.4 5.2"/></svg><span>کارمندان</span></button>
-    <button data-tab="prj" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span>پروژه‌ها</span></button>
-    <button data-tab="slip" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l5 5v15H6z"/><path d="M14 2v5h5M9 13h6M9 17h6"/></svg><span>فیش حقوقی</span></button>
-    <button data-tab="set" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg><span>تنظیمات</span></button>
+    <button data-tab="home" aria-selected="true"><i>🏠</i><span>خانه</span></button>
+    <button data-tab="work" aria-selected="false"><i>🗓️</i><span>کارکرد</span></button>
+    <button data-tab="prj" aria-selected="false"><i>🏗️</i><span>پروژه‌ها</span></button>
+    <button data-tab="slip" aria-selected="false"><i>🧾</i><span>فیش حقوقی</span></button>
+    <button data-tab="set" aria-selected="false"><i>⚙️</i><span>تنظیمات</span></button>
 </nav>
 <main>
-<section id="tab-work">
+<section id="tab-home">
+  <div class="card"><h2 id="hm-hi">سلام 👋</h2><p class="muted" id="hm-date" style="margin:0"></p></div>
+  <div class="qa">
+    <button data-go="work"><i>🗓️</i>✅ ثبت کارکرد</button>
+    <button data-go="work" data-gp="pane-py"><i>💵</i>💵 ثبت دریافتی</button>
+    <button data-go="prj" data-gp="pane-prj"><i>🏗️</i>پروژه جدید</button>
+    <button data-go="prj" data-gp="pane-emp"><i>👷</i>کارمند جدید</button>
+    <button data-go="slip"><i>🧾</i>فیش حقوقی</button>
+    <button data-go="set"><i>🎨</i>تنظیمات</button>
+  </div>
+  <div class="card"><h3>📊 خلاصه این ماه</h3><div class="sum" id="hm-sum"></div></div>
+  <div class="card"><h3>🕘 آخرین کارکردها</h3><div id="hm-last"></div></div>
+</section>
+
+<section id="tab-work" hidden>
+<div class="seg"><button data-pane="pane-wk" aria-selected="true">🗓️ کارکرد</button><button data-pane="pane-py" aria-selected="false">💵 دریافتی</button></div>
+<div class="pane" id="pane-wk">
   <div class="card">
-    <h2>ثبت کارکرد روزانه</h2>
+    <h2>✅ ثبت کارکرد روزانه</h2>
     <div class="grid">
       <div class="field"><label for="w-emp">کارمند</label><select id="w-emp"></select></div>
       <div data-dp="wdp" data-label="تاریخ (شمسی)"></div>
@@ -178,21 +222,20 @@ details summary{padding:6px 0}
   <div class="card"><h3 id="w-title">آخرین کارکردها</h3><div id="w-list"></div></div>
 
   <div class="card">
-    <h2>گزارش و خروجی کارکرد</h2>
+    <h2>📤 گزارش و خروجی کارکرد</h2>
     <div class="grid">
       <div class="field"><label for="r-emp">کارمند</label><select id="r-emp"></select></div>
       <div data-dp="rfrom" data-label="از تاریخ"></div>
       <div data-dp="rto" data-label="تا تاریخ"></div>
       <div class="field"><label for="r-place">محل کار</label><select id="r-place"></select></div>
     </div>
-    <div class="exp"><button class="btn" data-exp="work:prev">پیش‌نمایش</button><button class="btn amber" data-exp="work:pdf">PDF</button><button class="btn alt" data-exp="work:img">عکس</button><button class="btn alt" data-exp="work:csv">اکسل</button></div><div class="row" style="margin-top:8px"><button class="btn alt" data-act="copyRep">کپی گزارش متنی</button></div>
+    <div class="exp"><button class="btn" data-exp="work:prev">👁️ پیش‌نمایش</button><button class="btn amber" data-exp="work:pdf">📄 PDF</button><button class="btn alt" data-exp="work:img">🖼️ عکس</button><button class="btn alt" data-exp="work:csv">📊 اکسل</button></div><div class="row" style="margin-top:8px"><button class="btn alt" data-act="copyRep">کپی گزارش متنی</button></div>
   </div>
   <div class="card" id="r-out"></div>
-</section>
-
-<section id="tab-pay" hidden>
+</div>
+<div class="pane" id="pane-py" hidden>
   <div class="card">
-    <h2>ثبت مبلغ دریافتی</h2>
+    <h2>💵 ثبت مبلغ دریافتی</h2>
     <div class="grid">
       <div class="field"><label for="p-emp">کارمند</label><select id="p-emp"></select></div>
       <div data-dp="pdp" data-label="تاریخ دریافت"></div>
@@ -202,57 +245,62 @@ details summary{padding:6px 0}
     <div class="row"><button class="btn" data-act="savePay">ثبت دریافتی</button></div>
   </div>
   <div class="card"><h3 id="p-title">دریافتی‌های ثبت‌شده</h3><div id="p-list"></div></div>
-  <div class="card"><h2>خروجی دریافتی‌ها</h2><div class="grid"><div class="field"><label for="py-emp">کارمند</label><select id="py-emp"></select></div><div data-dp="pyfrom" data-label="از تاریخ"></div><div data-dp="pyto" data-label="تا تاریخ"></div></div><div class="exp"><button class="btn" data-exp="pay:prev">پیش‌نمایش</button><button class="btn amber" data-exp="pay:pdf">PDF</button><button class="btn alt" data-exp="pay:img">عکس</button><button class="btn alt" data-exp="pay:csv">اکسل</button></div></div>
+  <div class="card"><h2>📤 خروجی دریافتی‌ها</h2><div class="grid"><div class="field"><label for="py-emp">کارمند</label><select id="py-emp"></select></div><div data-dp="pyfrom" data-label="از تاریخ"></div><div data-dp="pyto" data-label="تا تاریخ"></div></div><div class="exp"><button class="btn" data-exp="pay:prev">👁️ پیش‌نمایش</button><button class="btn amber" data-exp="pay:pdf">📄 PDF</button><button class="btn alt" data-exp="pay:img">🖼️ عکس</button><button class="btn alt" data-exp="pay:csv">📊 اکسل</button></div></div>
+</div>
 </section>
 
-<section id="tab-emp" hidden>
+<section id="tab-prj" hidden>
+<div class="seg"><button data-pane="pane-prj" aria-selected="true">🏗️ پروژه‌ها</button><button data-pane="pane-emp" aria-selected="false">👷 کارمندان</button><button data-pane="pane-pl" aria-selected="false">📍 محل‌ها</button></div>
+<div class="pane" id="pane-emp" hidden>
   <div class="card">
     <h2 id="e-head">کارمند جدید</h2>
     <input type="hidden" id="e-id">
     <div class="grid">
       <div class="field"><label for="e-name">نام و نام خانوادگی</label><input id="e-name"></div>
-      <div class="field"><label for="e-phone">تلفن (اختیاری)</label><input id="e-phone" inputmode="tel"></div>
+      <div class="field"><label for="e-phone">📱 موبایل (اختیاری)</label><input id="e-phone" inputmode="tel" data-phone></div>
       <div class="field"><label for="e-wage">مزد روزانه پیش‌فرض</label><input id="e-wage" class="money" inputmode="decimal"></div>
       <div class="field"><label for="e-credit">بستانکاری قبلی (ما به او بدهکاریم)</label><input id="e-credit" class="money" inputmode="decimal"></div>
       <div class="field"><label for="e-debt">بدهی قبلی (او به ما بدهکار است)</label><input id="e-debt" class="money" inputmode="decimal"></div>
     </div>
-    <div class="row"><button class="btn" data-act="saveEmp">ذخیره کارمند</button><button class="btn alt" data-act="cancelEmp" id="e-cancel" hidden>انصراف از ویرایش</button><button class="btn alt" data-act="addSelf">افزودن خودم (مالک)</button></div>
+    <div class="row"><button class="btn" data-act="saveEmp">💾 ذخیره کارمند</button><button class="btn alt" data-act="cancelEmp" id="e-cancel" hidden>انصراف از ویرایش</button><button class="btn alt" data-act="addSelf">افزودن خودم (مالک)</button></div>
   </div>
-  <div class="card"><h3>فهرست کارمندان</h3><div id="e-list"></div></div>
-  <div class="card"><h2>خروجی فهرست و مانده حساب کارمندان</h2><div class="exp"><button class="btn" data-exp="emp:prev">پیش‌نمایش</button><button class="btn amber" data-exp="emp:pdf">PDF</button><button class="btn alt" data-exp="emp:img">عکس</button><button class="btn alt" data-exp="emp:csv">اکسل</button></div></div>
-</section>
-
-<section id="tab-prj" hidden>
+  <div class="card"><h3>👷 فهرست کارمندان</h3><div id="e-list"></div></div>
+  <div class="card"><h2>📤 خروجی فهرست و مانده حساب</h2><div class="exp"><button class="btn" data-exp="emp:prev">👁️ پیش‌نمایش</button><button class="btn amber" data-exp="emp:pdf">📄 PDF</button><button class="btn alt" data-exp="emp:img">🖼️ عکس</button><button class="btn alt" data-exp="emp:csv">📊 اکسل</button></div></div>
+</div>
+<div class="pane" id="pane-prj">
   <div class="card">
     <h2 id="pj-head">ثبت پروژه جدید</h2>
     <input type="hidden" id="pj-id">
     <div class="grid">
       <div class="field"><label for="pj-name">نام پروژه</label><input id="pj-name"></div>
       <div class="field"><label for="pj-client">کارفرما / مشتری</label><input id="pj-client"></div>
+      <div class="field"><label for="pj-phone">📱 موبایل کارفرما</label><input id="pj-phone" inputmode="tel" data-phone></div>
       <div class="field"><label for="pj-addr">آدرس محل پروژه</label><input id="pj-addr"></div>
+      <div class="field"><label for="pj-wage">روزمزد من در این پروژه (خالی = پیش‌فرض تنظیمات)</label><input id="pj-wage" class="money" inputmode="decimal"></div>
       <div data-dp="pjstart" data-label="تاریخ شروع"></div>
       <div class="field"><label for="pj-status">وضعیت</label><select id="pj-status"><option>در حال اجرا</option><option>متوقف</option><option>تمام‌شده</option></select></div>
       <div class="field"><label for="pj-amt">مبلغ قرارداد (اختیاری)</label><input id="pj-amt" class="money" inputmode="decimal"></div>
     </div>
     <div class="field" style="margin-bottom:14px"><label for="pj-note">توضیحات</label><input id="pj-note"></div>
-    <div class="row"><button class="btn" data-act="savePrj">ذخیره پروژه</button><button class="btn alt" data-act="cancelPrj" id="pj-cancel" hidden>انصراف</button></div>
+    <div class="row"><button class="btn" data-act="savePrj">💾 ذخیره پروژه</button><button class="btn alt" data-act="cancelPrj" id="pj-cancel" hidden>انصراف</button></div>
   </div>
-  <div class="card"><h3>پروژه‌ها</h3><div id="pj-list"></div></div>
+  <div class="card"><h3>🏗️ پروژه‌ها</h3><div id="pj-list"></div></div>
   <div class="card">
-    <h2>دفتر کار روزانه پروژه</h2>
+    <h2>📒 دفتر کار روزانه پروژه</h2>
     <p class="muted" style="margin-top:-6px">کارهایی را که هر روز انجام داده‌اید یادداشت کنید تا بعداً در گزارش ببینید.</p>
     <div class="grid">
       <div class="field"><label for="lg-prj">پروژه</label><select id="lg-prj"></select></div>
       <div data-dp="lgdp" data-label="تاریخ"></div>
       <div class="field"><label for="lg-who">انجام‌دهنده</label><select id="lg-who"></select></div>
       <div class="field"><label for="lg-h">ساعت کار</label><input id="lg-h" inputmode="decimal" placeholder="۸"></div>
+      <div class="field"><label for="lg-kind">🛠️ نوع کارکرد (چه کاری انجام شد)</label><input id="lg-kind" list="kinds" placeholder="مثلاً اجرا، نظارت، نصب..."><datalist id="kinds"><option value="اجرا"><option value="نقشه‌برداری"><option value="نظارت"><option value="نصب"><option value="حمل و نقل"><option value="تعمیرات"><option value="خرید مصالح"><option value="جلسه / هماهنگی"><option value="سایر"></datalist></div>
     </div>
     <div class="field" style="margin-bottom:14px"><label for="lg-desc">شرح کار انجام‌شده</label><textarea id="lg-desc" rows="3"></textarea></div>
-    <button class="btn" data-act="saveLog">ثبت در دفتر کار</button>
+    <button class="btn" data-act="saveLog">📒 ثبت در دفتر کار</button>
     <div id="lg-list" style="margin-top:14px"></div>
   </div>
   <div class="card">
-    <h2>مالی پروژه</h2>
+    <h2>💰 مالی پروژه</h2>
     <div class="grid">
       <div class="field"><label for="pf-prj">پروژه</label><select id="pf-prj"></select></div>
       <div data-dp="pfdp" data-label="تاریخ"></div>
@@ -264,28 +312,41 @@ details summary{padding:6px 0}
     <div id="pf-list" style="margin-top:14px"></div>
   </div>
   <div class="card">
-    <h2>گزارش و خروجی پروژه</h2>
+    <h2>📤 گزارش و خروجی پروژه</h2>
     <div class="grid">
       <div class="field"><label for="pr-prj">پروژه</label><select id="pr-prj"></select></div>
       <div data-dp="prfrom" data-label="از تاریخ"></div>
       <div data-dp="prto" data-label="تا تاریخ"></div>
     </div>
-    <div class="exp"><button class="btn" data-exp="prj:prev">پیش‌نمایش</button><button class="btn amber" data-exp="prj:pdf">PDF</button><button class="btn alt" data-exp="prj:img">عکس</button><button class="btn alt" data-exp="prj:csv">اکسل</button></div>
+    <div class="exp"><button class="btn" data-exp="prj:prev">👁️ پیش‌نمایش</button><button class="btn amber" data-exp="prj:pdf">📄 PDF</button><button class="btn alt" data-exp="prj:img">🖼️ عکس</button><button class="btn alt" data-exp="prj:csv">📊 اکسل</button></div>
     <div id="pr-out" style="margin-top:14px"></div>
   </div>
+</div>
+<div class="pane" id="pane-pl" hidden>
+  <div class="card">
+    <h2>📍 محل‌های کار</h2>
+    <div class="row" style="margin-bottom:10px"><input id="pl-name" placeholder="نام محل کار، مثلاً پروژه ..." style="flex:1 1 200px;width:auto"><button class="btn" data-act="addPlace">افزودن</button></div>
+    <div id="pl-list"></div>
+  </div>
+</div>
 </section>
 
 <section id="tab-slip" hidden>
   <div class="card">
-    <h2 id="st-head">ثبت پرسنل (حقوق طبق قانون کار)</h2>
+    <h2 id="st-head">🧑‍💼 ثبت پرسنل (فیش حقوقی)</h2>
     <input type="hidden" id="st-id">
     <div class="grid">
       <div class="field"><label for="st-name">نام و نام خانوادگی</label><input id="st-name"></div>
-      <div class="field"><label for="st-code">کد پرسنلی</label><input id="st-code" inputmode="numeric"></div>
       <div class="field"><label for="st-nid">کد ملی</label><input id="st-nid" inputmode="numeric"></div>
+      <div class="field"><label for="st-co">🏢 نام شرکت / ارگان محل کار</label><input id="st-co"></div>
+      <div class="field"><label for="st-ins">شماره بیمه</label><input id="st-ins" inputmode="numeric"></div>
+      <div class="field"><label for="st-phone">📱 موبایل (اختیاری)</label><input id="st-phone" inputmode="tel" data-phone></div>
+    </div>
+    <details style="margin-bottom:14px"><summary class="muted" style="cursor:pointer">⚙️ جزئیات بیشتر (اختیاری؛ مقدار پیش‌فرض قانونی دارد)</summary>
+    <div class="grid" style="margin-top:12px">
+      <div class="field"><label for="st-code">کد پرسنلی</label><input id="st-code" inputmode="numeric"></div>
       <div class="field"><label for="st-pos">سمت / شغل</label><input id="st-pos"></div>
       <div data-dp="sthire" data-label="تاریخ استخدام"></div>
-      <div class="field"><label for="st-ins">شماره بیمه</label><input id="st-ins" inputmode="numeric"></div>
       <div class="field"><label for="st-bank">شماره شبا / کارت</label><input id="st-bank" inputmode="numeric"></div>
       <div class="field"><label for="st-mar">وضعیت تأهل</label><select id="st-mar"><option value="0">مجرد</option><option value="1">متأهل</option></select></div>
       <div class="field"><label for="st-kids">تعداد فرزند</label><input id="st-kids" inputmode="numeric" value="0"></div>
@@ -297,7 +358,7 @@ details summary{padding:6px 0}
       <div class="field"><label for="st-hard">فوق‌العاده سختی کار (٪)</label><input id="st-hard" inputmode="decimal" value="0"></div>
       <div class="field"><label for="st-legal">ساعت موظفی ماهانه (خالی = خودکار)</label><input id="st-legal" inputmode="decimal"></div>
     </div>
-    <h3>مزایای قابل انتخاب</h3>
+<h3>🎁 مزایای قابل انتخاب</h3>
     <div class="row" style="margin-bottom:14px">
       <label class="tick"><input type="checkbox" id="st-b-housing" checked> حق مسکن</label>
       <label class="tick"><input type="checkbox" id="st-b-bon" checked> بن کارگری</label>
@@ -305,15 +366,17 @@ details summary{padding:6px 0}
       <label class="tick"><input type="checkbox" id="st-b-child" checked> حق اولاد</label>
       <label class="tick"><input type="checkbox" id="st-b-sen" checked> پایه سنوات</label>
       <label class="tick"><input type="checkbox" id="st-n35"> حق شب‌کاری (۳۵٪)</label>
-    </div>
+    </div></details>
     <div class="row"><button class="btn" data-act="saveStaff">ذخیره پرسنل</button><button class="btn amber" data-act="sampleStaff">افزودن نمونه آزمایشی</button><button class="btn alt" data-act="cancelStaff" id="st-cancel" hidden>انصراف</button></div>
   </div>
-  <div class="card"><h3>فهرست پرسنل</h3><div id="st-list"></div></div>
+  <div class="card"><h3>🧑‍💼 فهرست پرسنل</h3><div id="st-list"></div></div>
   <div class="card">
-    <h2>محاسبه حقوق و فیش</h2>
+    <h2>🧮 محاسبه حقوق و صدور فیش</h2>
     <div class="grid">
       <div class="field"><label for="sl-staff">پرسنل</label><select id="sl-staff"></select></div>
       <div class="field"><label>ماه و سال</label><div class="dp"><select id="sl-m"></select><select id="sl-y"></select></div></div>
+      <div class="field"><label for="sl-shift">🕒 نوع شیفت کاری</label><select id="sl-shift"></select></div>
+      <div data-dp="slcyc" data-label="شروع چرخه شیفت (روز اول کار)"></div>
       <div class="field"><label for="sl-abs">روز غیبت / مرخصی بدون حقوق</label><input id="sl-abs" inputmode="numeric" value="0"></div>
       <div class="field"><label for="sl-ot">اضافه‌کار دستی (ساعت)</label><input id="sl-ot" inputmode="decimal" value="0"></div>
       <div class="field"><label for="sl-hol">تعطیل‌کاری دستی (ساعت)</label><input id="sl-hol" inputmode="decimal" value="0"></div>
@@ -324,46 +387,58 @@ details summary{padding:6px 0}
     <div id="sl-items"></div>
     <div class="row" style="margin:10px 0 14px"><button class="btn alt sm" data-act="addItem">افزودن ردیف</button></div>
     <div id="sl-out"></div>
-    <div style="margin-top:14px"><div class="exp"><button class="btn" data-exp="slip:prev">پیش‌نمایش</button><button class="btn amber" data-exp="slip:pdf">PDF</button><button class="btn alt" data-exp="slip:img">عکس</button></div></div>
+    <div style="margin-top:14px"><div class="exp"><button class="btn" data-exp="slip:prev">👁️ پیش‌نمایش</button><button class="btn amber" data-exp="slip:pdf">📄 PDF</button><button class="btn alt" data-exp="slip:img">🖼️ عکس</button></div></div>
   </div>
 </section>
 
 
 <section id="tab-set" hidden>
   <div class="card">
-    <h2>محل‌های کار</h2>
-    <div class="row" style="margin-bottom:10px"><input id="pl-name" placeholder="نام محل کار، مثلاً پروژه ..." style="flex:1 1 200px;width:auto"><button class="btn" data-act="addPlace">افزودن</button></div>
-    <div id="pl-list"></div>
+    <h2>🎨 ظاهر برنامه</h2>
+    <h3>حالت نمایش</h3>
+    <div class="chips" id="th-mode"><button data-th="auto">🌗 خودکار</button><button data-th="light">☀️ روشن</button><button data-th="dark">🌙 تیره</button></div>
+    <h3>رنگ برنامه</h3>
+    <div class="sw" id="th-acc"></div>
+    <h3>اندازه نوشته‌ها</h3>
+    <div class="chips" id="th-fs"><button data-fs="14">کوچک</button><button data-fs="15">متوسط</button><button data-fs="17">بزرگ</button><button data-fs="19">خیلی بزرگ</button></div>
+    <h3>صفحه شروع</h3>
+    <div class="chips" id="th-home"><button data-hm="home">🏠 خانه</button><button data-hm="work">🗓️ کارکرد</button><button data-hm="prj">🏗️ پروژه‌ها</button><button data-hm="slip">🧾 فیش</button></div>
   </div>
   <div class="card">
-    <h2>تنظیمات محاسبه</h2>
+    <h2>🧮 تنظیمات محاسبه</h2>
     <div class="grid">
       <div class="field"><label for="s-hours">ساعت کار عادی در روز</label><input id="s-hours" inputmode="decimal"></div>
       <div class="field"><label for="s-coef">ضریب اضافه‌کار (مثلاً ۱.۴)</label><input id="s-coef" inputmode="decimal"></div>
+      <div class="field"><label for="s-mywage">💪 روزمزد خودم (برای گزارش پروژه)</label><input id="s-mywage" class="money" inputmode="decimal"></div>
       <div class="field"><label for="s-unit">واحد پول</label><select id="s-unit"><option>تومان</option><option>ریال</option></select></div>
     </div>
     <p class="muted">مبلغ اضافه‌کار = ساعت اضافه‌کار × (مزد روز ÷ ساعت کار عادی) × ضریب</p>
   </div>
   <div class="card">
-    <h2>مشخصات و نرخ‌های قانون کار (سال ۱۴۰۵)</h2>
+    <h2>⚖️ مشخصات و نرخ‌های قانون کار (۱۴۰۵)</h2>
     <div class="field" style="margin-bottom:14px"><label for="cmp">نام کارفرما / شرکت (روی فیش و گزارش‌ها)</label><input id="cmp"></div>
     <div class="grid" id="lw-box"></div>
     <p class="muted">نرخ‌ها طبق اطلاعات منتشرشده برای ۱۴۰۵ وارد شده‌اند و قابل ویرایش‌اند. مالیات: معافیت ۴۰ میلیون تومان در ماه و نرخ‌های پلکانی ۱۰ تا ۳۰ درصد. پیش از استفاده رسمی با ادارهٔ کار یا حسابدار تطبیق دهید.</p>
     <button class="btn del sm" data-act="lawReset">بازگشت به مقادیر پیش‌فرض</button>
   </div>
   <div class="card" id="acct-card">
-    <h2>حساب کاربری و همگام‌سازی</h2>
+    <h2>☁️ حساب کاربری و همگام‌سازی</h2>
     <p class="muted" id="acct">ورود به حساب فعال نیست؛ اطلاعات فقط روی همین گوشی است.</p>
     <div class="row"><button class="btn" data-act="auOpen">ورود / ثبت‌نام</button><button class="btn alt" data-act="auSync">همگام‌سازی اکنون</button><button class="btn del" data-act="auOut">خروج از حساب</button></div>
   </div>
   <div class="card">
-    <h2>رمز ورود</h2>
+    <h2>🔒 رمز ورود</h2>
     <div class="row"><input id="pin-in" type="password" inputmode="numeric" placeholder="رمز جدید (خالی = حذف)" style="flex:1 1 180px;width:auto"><button class="btn" data-act="setPin">ذخیره رمز</button></div>
     <p class="muted">این رمز فقط از باز شدن ساده برنامه جلوگیری می‌کند و رمزگذاری اطلاعات نیست.</p>
   </div>
   
 <div class="card">
-    <h2>پشتیبان‌گیری</h2>
+    <h2>👨‍💻 درباره برنامه و توسعه‌دهنده</h2>
+    <div class="item e"><span class="avatar">ع</span><div class="t"><b>علی عالمی</b><div class="muted">📞 <a href="tel:09147619307" dir="ltr">09147619307</a></div><div class="muted">✉️ <a href="mailto:ali.tab77.1366@gmail.com" dir="ltr">ali.tab77.1366@gmail.com</a></div></div></div>
+    <p class="muted" style="margin-bottom:0">حسابداری کار مارال · نسخه ۲٫۰ 🚀</p>
+  </div>
+<div class="card">
+    <h2>💾 پشتیبان‌گیری</h2>
     <div class="row">
       <button class="btn alt" data-act="backup">ذخیره نسخه پشتیبان</button>
       <label class="btn alt" for="restore" style="color:var(--fg)">بازیابی از فایل</label>
@@ -375,8 +450,8 @@ details summary{padding:6px 0}
 </main>
 </div>
 <div id="toast" role="status"></div>
-<div id="auth" class="lock" hidden><div style="max-height:92vh;overflow:auto"><b style="font-size:18px">ورود به حسابداری کار مارال</b><span class="muted">با ورود، اطلاعات شما روی هر گوشی در دسترس است.</span>
-  <input id="au-phone" type="tel" inputmode="tel" placeholder="شماره موبایل، مثلاً 09123456789"><button class="btn" data-act="auSend">ارسال کد پیامکی</button>
+<div id="auth" class="lock" hidden><div style="max-height:92vh;overflow:auto"><img alt="" src="data:image/png;base64,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" style="width:72px;height:72px;align-self:center;border-radius:18px"><b style="font-size:18px">ورود به حسابداری کار مارال</b><span class="muted">با ورود، اطلاعات شما روی هر گوشی در دسترس است.</span>
+  <input id="au-phone" type="tel" inputmode="tel" data-phone placeholder="شماره موبایل، مثلاً 09123456789"><button class="btn" data-act="auSend">ارسال کد پیامکی</button>
   <div id="au-step2" hidden style="display:flex;flex-direction:column;gap:8px"><input id="au-code" inputmode="numeric" placeholder="کد تأیید"><button class="btn amber" data-act="auVerify">تأیید و ورود</button></div>
   <div class="muted">یا با ایمیل و رمز</div><input id="au-mail" type="email" inputmode="email" dir="ltr" placeholder="ایمیل"><input id="au-pass" type="password" dir="ltr" placeholder="رمز (حداقل ۶ کاراکتر)">
   <div style="display:flex;gap:8px"><button class="btn" style="flex:1" data-act="auMail">ورود</button><button class="btn amber" style="flex:1" data-act="auReg">ثبت‌نام</button></div><button class="btn alt sm" data-act="auReset">فراموشی رمز</button>
@@ -489,9 +564,9 @@ function renderOpts(){$('sl-opts').innerHTML=SLIPOPT.map(o=>{const x=SLOPT[o.k];
 function shiftTbl(c){if(!c.sh)return'';return`<details style="margin-top:12px"><summary class="muted" style="cursor:pointer">جدول شیفت این ماه (${fa(c.M.wd)} روز کار)</summary><div class="tw"><table><tr><th>روز</th><th>هفته</th><th>ساعت کار</th><th>شروع</th></tr>${c.M.dl.map(r=>`<tr><td>${fa(r[0])}</td><td>${WD[r[1]]}</td><td>${r[2]?fa(r[2]):'استراحت'}</td><td>${r[2]?fa(p2(r[3]))+':۰۰':'—'}</td></tr>`).join('')}</table></div></details>`}
 const stf=id=>S.staff.find(x=>x.id===id);
 function slipHtml(st,y,m,c){const u=U(),hd=st.hire?fmtD(st.hire):'—';
-  const info=[['نام و نام خانوادگی',st.name],['کد پرسنلی',st.code||'—'],['کد ملی',st.nid?fa(st.nid):'—'],['سمت',st.pos||'—'],['تاریخ استخدام',hd],['شماره بیمه',st.ins?fa(st.ins):'—'],['وضعیت تأهل',(st.married?'متأهل':'مجرد')+' / '+fa(st.kids||0)+' فرزند'],['سابقه کار',fa(st.years||0)+' سال'],['شیفت کاری',c.sh?c.sh.n:'—'],['روزهای ماه',fa(c.M.N)],['روز کارکرد (شیفت)',c.sh?fa(c.M.wd):'—'],['غیبت',fa(c.absent)+' روز'],['ساعت موظفی ماه',hrs(c.legal)],['جمع ساعت کار',c.sh?hrs(c.M.hr):'—'],['اضافه‌کار (محاسبه‌شده)',hrs(c.ot)+' ساعت'],['شب‌کاری',hrs(c.M.night)+' ساعت'],['جمعه/تعطیل‌کاری',hrs(c.hol)+' ساعت'],['مزد ساعتی',money(c.hourly)],['نرخ ساعتی اضافه‌کار',money(c.hourly*S.law.otc)],['شماره شبا / کارت',st.bank?fa(st.bank):'—']];
+  const info=[['نام و نام خانوادگی',st.name],['شرکت / ارگان',st.co||S.set.company||'—'],['کد پرسنلی',st.code||'—'],['کد ملی',st.nid?fa(st.nid):'—'],['سمت',st.pos||'—'],['تاریخ استخدام',hd],['شماره بیمه',st.ins?fa(st.ins):'—'],['وضعیت تأهل',(st.married?'متأهل':'مجرد')+' / '+fa(st.kids||0)+' فرزند'],['سابقه کار',fa(st.years||0)+' سال'],['شیفت کاری',c.sh?c.sh.n:'—'],['روزهای ماه',fa(c.M.N)],['روز کارکرد (شیفت)',c.sh?fa(c.M.wd):'—'],['غیبت',fa(c.absent)+' روز'],['ساعت موظفی ماه',hrs(c.legal)],['جمع ساعت کار',c.sh?hrs(c.M.hr):'—'],['اضافه‌کار (محاسبه‌شده)',hrs(c.ot)+' ساعت'],['شب‌کاری',hrs(c.M.night)+' ساعت'],['جمعه/تعطیل‌کاری',hrs(c.hol)+' ساعت'],['مزد ساعتی',money(c.hourly)],['نرخ ساعتی اضافه‌کار',money(c.hourly*S.law.otc)],['شماره شبا / کارت',st.bank?fa(st.bank):'—']];
   const rows=a=>a.map(x=>`<tr><td>${esc(x.n)}</td><td>${money(x.a)}</td></tr>`).join('')||'<tr><td colspan="2">—</td></tr>';
-  return `<div class="sl-hd"><div><div class="ps-t">${esc(S.set.company||'حسابداری کار مارال')}</div><div class="ps-s">فیش حقوقی ${MN[m-1]} ${fa(y)}</div></div><div class="ps-s">تاریخ صدور: ${fmtD(jstr(...nowJ()))}</div></div>
+  return `<div class="sl-hd"><div><div class="ps-t">${esc(st.co||S.set.company||'حسابداری کار مارال')}</div><div class="ps-s">فیش حقوقی ${MN[m-1]} ${fa(y)}</div></div><div class="ps-s">تاریخ صدور: ${fmtD(jstr(...nowJ()))}</div></div>
   <div class="sl-info">${info.map(i=>`<div><small>${i[0]}</small>${esc(i[1])}</div>`).join('')}</div>
   <div class="sl-cols"><div><table><tr><th colspan="2">حقوق و مزایا (${u})</th></tr>${rows(c.R)}<tr><th>جمع مزایا</th><th>${money(c.gross)}</th></tr></table></div>
   <div><table><tr><th colspan="2">کسورات (${u})</th></tr>${rows(c.D)}<tr><th>جمع کسورات</th><th>${money(c.ded)}</th></tr></table>
@@ -500,57 +575,63 @@ function slipHtml(st,y,m,c){const u=U(),hd=st.hire?fmtD(st.hire):'—';
   <div class="sl-sig"><div>مهر و امضای کارفرما</div><div>امضای دریافت‌کننده</div></div>`}
 let PDFSRC=null,SLIPITEMS=[];
 function slipInp(){return{absent:$('sl-abs').value,ot:$('sl-ot').value,hol:$('sl-hol').value,items:SLIPITEMS,opts:SLOPT}}
-function slipCur(){const st=stf($('sl-staff').value);if(!st){toast('ابتدا پرسنل ثبت کنید');return null}const y=+$('sl-y').value,m=+$('sl-m').value;return{st,y,m,c:calcPay(st,y,m,slipInp())}}
-function renderSlip(){const o=$('sl-out'),x=slipCur();if(!x){o.innerHTML='<div class="empty">برای دیدن محاسبه، یک پرسنل ثبت کنید یا «افزودن نمونه آزمایشی» را بزنید.</div>';return}
+function slipCur(q){const st=stf($('sl-staff').value);if(!st){if(!q)toast('ابتدا پرسنل ثبت کنید');return null}const y=+$('sl-y').value,m=+$('sl-m').value;const sv=$('sl-shift').value,sh=SHIFTS.find(q=>q.id===sv);let s2=st;if(sh&&sv!==st.shift)s2=Object.assign({},st,{shift:sv,pct:sh.p,n35:!!sh.n35});const cy=dpGet('slcyc');if(cy)s2=Object.assign({},s2,{cyc:cy});return{st:s2,y,m,c:calcPay(s2,y,m,slipInp())}}
+function slSync(){const st=stf($('sl-staff').value);if(!st)return;$('sl-shift').value=st.shift||'fix44';if(st.cyc)dpSet('slcyc',st.cyc)}
+function renderSlip(){const o=$('sl-out'),x=slipCur(1);if(!x){o.innerHTML='<div class="empty">برای دیدن محاسبه، یک پرسنل ثبت کنید یا «افزودن نمونه آزمایشی» را بزنید.</div>';return}
   const{c}=x,t=a=>a.map(r=>`<tr><td>${esc(r.n)}</td><td>${money(r.a)}</td></tr>`).join('');
   o.innerHTML=`<div class="sum"><div><small>جمع مزایا</small><b>${money(c.gross)}</b></div><div><small>کسورات</small><b>${money(c.ded)}</b></div><div><small>مشمول بیمه</small><b>${money(c.insb)}</b></div><div><small>سهم کارفرما + بیکاری</small><b>${money(c.eI+c.uI)}</b></div><div class="final"><small>خالص قابل پرداخت (${U()})</small><b>${money(c.net)}</b></div></div>
   <div class="tw"><table><tr><th>شرح</th><th>مبلغ</th></tr>${t(c.R)}${c.D.map(r=>`<tr><td class="neg">− ${esc(r.n)}</td><td class="neg">${money(r.a)}</td></tr>`).join('')}</table></div>
   ${c.sh?`<p class="muted">شیفت: ${esc(c.sh.n)} · ${fa(c.M.wd)} روز کار · ${hrs(c.M.hr)} ساعت · شب‌کاری ${hrs(c.M.night)} ساعت · جمعه‌کاری ${hrs(c.M.fri)} ساعت · موظفی ${hrs(c.legal)} ساعت · اضافه‌کار خودکار ${hrs(c.otA)} ساعت</p>`:''}${shiftTbl(c)}`}
 function renderItems(){$('sl-items').innerHTML=SLIPITEMS.length?SLIPITEMS.map((it,i)=>`<div class="grid" style="margin-bottom:6px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))"><select data-i="${i}" data-k="t"><option value="e1"${it.t==='e1'?' selected':''}>مزایا (مشمول)</option><option value="e0"${it.t==='e0'?' selected':''}>مزایا (معاف)</option><option value="d"${it.t==='d'?' selected':''}>کسر</option></select><input data-i="${i}" data-k="n" placeholder="شرح" value="${esc(it.n||'')}"><input class="money" data-i="${i}" data-k="a" inputmode="decimal" placeholder="مبلغ" value="${esc(it.a||'')}"><button class="btn del sm" data-act="delItem" data-id="${i}">حذف</button></div>`).join(''):'<div class="muted">ردیفی اضافه نشده است.</div>'}
 function renderStaff(){const sel=$('sl-staff'),cur=sel.value;sel.innerHTML=S.staff.length?S.staff.map(s=>`<option value="${s.id}">${esc(s.name)}</option>`).join(''):'<option value="">پرسنلی ثبت نشده</option>';if([...sel.options].some(o=>o.value===cur))sel.value=cur;
-  $('st-list').innerHTML=S.staff.length?S.staff.map(s=>{const sh=SHIFTS.find(x=>x.id===s.shift);return`<div class="item"><span class="avatar">${esc(s.name.trim()[0]||'؟')}</span><div class="t"><b>${esc(s.name)}</b> <span class="muted">${esc(s.pos||'')}</span><div class="muted">مزد روزانه ${money(s.daily||S.law.daily)} ${U()} · ${esc(sh?sh.n:'بدون شیفت')}</div></div><div class="row"><button class="btn alt sm" data-act="editStaff" data-id="${s.id}">ویرایش</button><button class="btn del sm" data-act="delStaff" data-id="${s.id}">حذف</button></div></div>`}).join(''):'<div class="empty">پرسنلی ثبت نشده است.</div>';renderSlip()}
-function stForm(s){s=s||{};$('st-id').value=s.id||'';$('st-name').value=s.name||'';$('st-code').value=s.code||'';$('st-nid').value=s.nid||'';$('st-pos').value=s.pos||'';$('st-ins').value=s.ins||'';$('st-bank').value=s.bank||'';$('st-mar').value=s.married?'1':'0';$('st-kids').value=s.kids||0;$('st-years').value=s.years||0;$('st-daily').value=fmtIn(s.daily||S.law.daily);
+  $('st-list').innerHTML=S.staff.length?S.staff.map(s=>{const sh=SHIFTS.find(x=>x.id===s.shift);return`<div class="item"><span class="avatar">${esc(s.name.trim()[0]||'؟')}</span><div class="t"><b>${esc(s.name)}</b> <span class="muted">${esc(s.co||s.pos||'')}${s.phone?' · '+fa(esc(s.phone)):''}</span><div class="muted">مزد روزانه ${money(s.daily||S.law.daily)} ${U()} · ${esc(sh?sh.n:'بدون شیفت')}</div></div><div class="row"><button class="btn alt sm" data-act="editStaff" data-id="${s.id}">ویرایش</button><button class="btn del sm" data-act="delStaff" data-id="${s.id}">حذف</button></div></div>`}).join(''):'<div class="empty">پرسنلی ثبت نشده است.</div>';renderSlip()}
+function stForm(s){s=s||{};$('st-id').value=s.id||'';$('st-name').value=s.name||'';$('st-co').value=s.co||'';$('st-phone').value=s.phone||'';$('st-code').value=s.code||'';$('st-nid').value=s.nid||'';$('st-pos').value=s.pos||'';$('st-ins').value=s.ins||'';$('st-bank').value=s.bank||'';$('st-mar').value=s.married?'1':'0';$('st-kids').value=s.kids||0;$('st-years').value=s.years||0;$('st-daily').value=fmtIn(s.daily||S.law.daily);
   $('st-shift').value=s.shift||'fix44';const sh=SHIFTS.find(x=>x.id===$('st-shift').value);$('st-pct').value=s.pct!=null?s.pct:(sh?sh.p:0);$('st-hard').value=s.hard||0;$('st-legal').value=s.legal||'';const b=s.b||{housing:1,bon:1,mar:1,child:1,sen:1};
   ['housing','bon','mar','child','sen'].forEach(k=>$('st-b-'+k).checked=!!b[k]);$('st-n35').checked=s.n35!=null?!!s.n35:!!(sh&&sh.n35);dpSet('sthire',s.hire||jstr(...nowJ()));dpSet('stcyc',s.cyc||jstr(...nowJ()));
-  $('st-head').textContent=s.id?'ویرایش '+s.name:'ثبت پرسنل (حقوق طبق قانون کار)';$('st-cancel').hidden=!s.id}
+  $('st-head').textContent=s.id?'ویرایش '+s.name:'🧑‍💼 ثبت پرسنل (فیش حقوقی)';$('st-cancel').hidden=!s.id}
 function staffFromForm(){const n=$('st-name').value.trim();if(!n){toast('نام را وارد کنید');return null}
-  return{id:$('st-id').value||uid(),name:n,code:$('st-code').value.trim(),nid:$('st-nid').value.trim(),pos:$('st-pos').value.trim(),hire:dpGet('sthire'),ins:$('st-ins').value.trim(),bank:$('st-bank').value.trim(),married:$('st-mar').value==='1',kids:Math.max(0,Math.round(num($('st-kids').value))),years:Math.max(0,Math.round(num($('st-years').value))),daily:num($('st-daily').value)||S.law.daily,shift:$('st-shift').value,cyc:dpGet('stcyc'),pct:num($('st-pct').value),hard:num($('st-hard').value),legal:num($('st-legal').value)||0,n35:$('st-n35').checked,b:{housing:$('st-b-housing').checked,bon:$('st-b-bon').checked,mar:$('st-b-mar').checked,child:$('st-b-child').checked,sen:$('st-b-sen').checked}}}
+  return{id:$('st-id').value||uid(),name:n,co:$('st-co').value.trim(),phone:$('st-phone').value.trim(),code:$('st-code').value.trim(),nid:$('st-nid').value.trim(),pos:$('st-pos').value.trim(),hire:dpGet('sthire'),ins:$('st-ins').value.trim(),bank:$('st-bank').value.trim(),married:$('st-mar').value==='1',kids:Math.max(0,Math.round(num($('st-kids').value))),years:Math.max(0,Math.round(num($('st-years').value))),daily:num($('st-daily').value)||S.law.daily,shift:$('st-shift').value,cyc:dpGet('stcyc'),pct:num($('st-pct').value),hard:num($('st-hard').value),legal:num($('st-legal').value)||0,n35:$('st-n35').checked,b:{housing:$('st-b-housing').checked,bon:$('st-b-bon').checked,mar:$('st-b-mar').checked,child:$('st-b-child').checked,sen:$('st-b-sen').checked}}}
 /* projects */
 const allPlaces=()=>[...new Set([...S.places,...S.projects.filter(p=>p.status==='در حال اجرا').map(p=>p.name)])];
 const prj=id=>S.projects.find(p=>p.id===id);
+function myW(p){return (p&&p.mywage)||S.set.mywage||0}
+function prjPeople(p,lg,dy){const self=new Set(S.emps.filter(e=>e.self).map(e=>e.id));const my=new Set(),em=new Set();
+  lg.forEach(l=>{if(!l.who||self.has(l.who))my.add(l.date);else em.add(l.who+'|'+l.date)});
+  dy.forEach(r=>{if(!r.worked)return;if(self.has(r.emp))my.add(r.date);else em.add(r.emp+'|'+r.date)});
+  return{my:my.size,emp:em.size,earn:my.size*myW(p)}}
 function prjStats(p){const ds=S.days.filter(r=>r.place===p.name),w=ds.filter(r=>r.worked),cost=ds.reduce((s,r)=>{const x=dayPay(r);return s+x.base+x.ot},0);
   const lg=S.logs.filter(l=>l.prj===p.id),fin=S.pfin.filter(f=>f.prj===p.id),inn=fin.filter(f=>f.type==='in').reduce((s,f)=>s+f.amt,0),out=fin.filter(f=>f.type==='out').reduce((s,f)=>s+f.amt,0);
-  return{wdays:w.length,cost,logDays:new Set(lg.map(l=>l.date)).size,logs:lg.length,inn,out,profit:inn-out-cost}}
+  const ps=prjPeople(p,lg,ds);return{myDays:ps.my,empDays:ps.emp,myEarn:ps.earn,wdays:w.length,cost,logDays:new Set(lg.map(l=>l.date)).size,logs:lg.length,inn,out,profit:inn-out-cost}}
 function renderPrj(){const sels=['lg-prj','pf-prj','pr-prj'];sels.forEach(id=>{const s=$(id),c=s.value;s.innerHTML=S.projects.length?S.projects.map(p=>`<option value="${p.id}">${esc(p.name)}</option>`).join(''):'<option value="">ابتدا پروژه ثبت کنید</option>';if([...s.options].some(o=>o.value===c))s.value=c});
   const ws=$('lg-who'),cw=ws.value;ws.innerHTML='<option value="">خودم</option>'+S.emps.filter(e=>!e.self).map(e=>`<option value="${e.id}">${esc(e.name)}</option>`).join('');if([...ws.options].some(o=>o.value===cw))ws.value=cw;
   const col=s=>s==='در حال اجرا'?'y':s==='تمام‌شده'?'':'n';
-  $('pj-list').innerHTML=S.projects.length?S.projects.map(p=>{const t=prjStats(p);return`<div class="item"><div class="t"><b>${esc(p.name)}</b> <span class="pill ${col(p.status)}" ${p.status==='تمام‌شده'?'style="background:var(--soft);color:var(--muted)"':''}>${p.status}</span><div class="muted">${p.client?esc(p.client)+' · ':''}${p.start?'شروع '+fmtD(p.start):''}${p.addr?' · '+esc(p.addr):''}</div><div class="muted">${fa(t.wdays)} روز کارکرد ثبت‌شده · ${fa(t.logDays)} روز دفتر کار · هزینه کارگری ${money(t.cost)} · دریافت ${money(t.inn)} · هزینه ${money(t.out)} · <span class="${t.profit>=0?'pos':'neg'}">سود/زیان ${money(t.profit)} ${U()}</span></div></div><div class="row"><button class="btn alt sm" data-act="editPrj" data-id="${p.id}">ویرایش</button><button class="btn del sm" data-act="delPrj" data-id="${p.id}">حذف</button></div></div>`}).join(''):'<div class="empty">پروژه‌ای ثبت نشده است.</div>';
+  $('pj-list').innerHTML=S.projects.length?S.projects.map(p=>{const t=prjStats(p);return`<div class="item"><div class="t"><b>${esc(p.name)}</b> <span class="pill ${col(p.status)}" ${p.status==='تمام‌شده'?'style="background:var(--soft);color:var(--muted)"':''}>${p.status}</span><div class="muted">${p.client?esc(p.client)+' · ':''}${p.start?'شروع '+fmtD(p.start):''}${p.addr?' · '+esc(p.addr):''}</div><div class="muted">${fa(t.wdays)} روز کارکرد ثبت‌شده · ${fa(t.logDays)} روز دفتر کار · 🙋 ${fa(t.myDays)} روز کار من · 👷 ${fa(t.empDays)} نفر-روز کارمندان${myW(p)?` · روزمزد من ${money(t.myEarn)}`:''} · هزینه کارگری ${money(t.cost)} · دریافت ${money(t.inn)} · هزینه ${money(t.out)} · <span class="${t.profit>=0?'pos':'neg'}">سود/زیان ${money(t.profit)} ${U()}</span></div></div><div class="row"><button class="btn alt sm" data-act="editPrj" data-id="${p.id}">ویرایش</button><button class="btn del sm" data-act="delPrj" data-id="${p.id}">حذف</button></div></div>`}).join(''):'<div class="empty">پروژه‌ای ثبت نشده است.</div>';
   const lp=$('lg-prj').value;const L=S.logs.filter(l=>l.prj===lp).sort((a,b)=>b.date.localeCompare(a.date));
-  $('lg-list').innerHTML=L.length?L.map(l=>`<div class="item"><div class="t"><b>${WD[wdOf(l.date)]} ${fmtD(l.date)}</b> <span class="muted">${l.who&&emp(l.who)?esc(emp(l.who).name):'خودم'}${l.h?' · '+hrs(l.h)+' ساعت':''}</span><div>${esc(l.desc)}</div></div><button class="btn del sm" data-act="delLog" data-id="${l.id}">حذف</button></div>`).join(''):'<div class="empty">برای این پروژه یادداشتی ثبت نشده است.</div>';
+  $('lg-list').innerHTML=L.length?L.map(l=>`<div class="item"><div class="t"><b>${WD[wdOf(l.date)]} ${fmtD(l.date)}</b> <span class="muted">${l.who&&emp(l.who)?esc(emp(l.who).name):'خودم'}${l.h?' · '+hrs(l.h)+' ساعت':''}</span>${l.kind?` <span class="pill y">🛠️ ${esc(l.kind)}</span>`:''}<div>${esc(l.desc)}</div></div><button class="btn del sm" data-act="delLog" data-id="${l.id}">حذف</button></div>`).join(''):'<div class="empty">برای این پروژه یادداشتی ثبت نشده است.</div>';
   const fp=$('pf-prj').value;const F=S.pfin.filter(f=>f.prj===fp).sort((a,b)=>b.date.localeCompare(a.date));
   $('pf-list').innerHTML=F.length?F.map(f=>`<div class="item"><div class="t"><b class="${f.type==='in'?'pos':'neg'}">${f.type==='in'?'+':'−'} ${money(f.amt)} ${U()}</b> <span class="muted">${fmtD(f.date)}${f.note?' · '+esc(f.note):''}</span></div><button class="btn del sm" data-act="delFin" data-id="${f.id}">حذف</button></div>`).join(''):'<div class="empty">تراکنشی ثبت نشده است.</div>';renderPrjRep()}
 function prjData(){const p=prj($('pr-prj').value);if(!p)return null;const from=dpGet('prfrom'),to=dpGet('prto');
   const lg=S.logs.filter(l=>l.prj===p.id&&l.date>=from&&l.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
   const dy=S.days.filter(r=>r.place===p.name&&r.date>=from&&r.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
   const fin=S.pfin.filter(f=>f.prj===p.id&&f.date>=from&&f.date<=to).sort((a,b)=>a.date.localeCompare(b.date));
-  const my=new Set(lg.filter(l=>!l.who).map(l=>l.date)),all=new Set(lg.map(l=>l.date));
+  const pp=prjPeople(p,lg,dy),all=new Set(lg.map(l=>l.date));const kinds={};lg.forEach(l=>{const k=l.kind||'بدون نوع';kinds[k]=kinds[k]||{n:0,h:0,d:new Set()};kinds[k].n++;kinds[k].h+=l.h||0;kinds[k].d.add(l.date)});
   const per={};dy.forEach(r=>{const e=emp(r.emp);const k=e?e.name:'?';per[k]=per[k]||{d:0,ot:0,a:0};if(r.worked)per[k].d++;per[k].ot+=r.ot||0;const x=dayPay(r);per[k].a+=x.base+x.ot});
-  return{p,from,to,lg,dy,fin,myDays:my.size,allDays:all.size,hours:lg.reduce((s,l)=>s+(l.h||0),0),per,inn:fin.filter(f=>f.type==='in').reduce((s,f)=>s+f.amt,0),out:fin.filter(f=>f.type==='out').reduce((s,f)=>s+f.amt,0),labor:Object.values(per).reduce((s,x)=>s+x.a,0)}}
+  return{kinds,empDays:pp.emp,myWage:myW(p),myEarn:pp.earn,p,from,to,lg,dy,fin,myDays:pp.my,allDays:all.size,hours:lg.reduce((s,l)=>s+(l.h||0),0),per,inn:fin.filter(f=>f.type==='in').reduce((s,f)=>s+f.amt,0),out:fin.filter(f=>f.type==='out').reduce((s,f)=>s+f.amt,0),labor:Object.values(per).reduce((s,x)=>s+x.a,0)}}
 function prjInner(d,pdf){const tb=(h,r)=>`<table><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr>${r}</table>`;
-  const ws=d.lg.map(l=>`<tr><td>${fmtD(l.date)}</td><td>${WD[wdOf(l.date)]}</td><td>${l.who&&emp(l.who)?esc(emp(l.who).name):'خودم'}</td><td>${l.h?hrs(l.h):'—'}</td><td style="white-space:normal">${esc(l.desc)}</td></tr>`).join('');
+  const ws=d.lg.map(l=>`<tr><td>${fmtD(l.date)}</td><td>${WD[wdOf(l.date)]}</td><td>${l.who&&emp(l.who)?esc(emp(l.who).name):'خودم'}</td><td>${esc(l.kind||'—')}</td><td>${l.h?hrs(l.h):'—'}</td><td style="white-space:normal">${esc(l.desc)}</td></tr>`).join('');
   const pr=Object.entries(d.per).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${fa(v.d)}</td><td>${hrs(v.ot)}</td><td>${money(v.a)}</td></tr>`).join('');
   const fn=d.fin.map(f=>`<tr><td>${fmtD(f.date)}</td><td>${f.type==='in'?'دریافت':'هزینه'}</td><td>${money(f.amt)}</td><td>${esc(f.note||'')}</td></tr>`).join('');
-  const sm=pdf?`<div class="ps-sum"><div><small>روزهای کار من</small><b>${fa(d.myDays)}</b></div><div><small>کل روزهای دفتر کار</small><b>${fa(d.allDays)}</b></div><div><small>جمع ساعت ثبت‌شده</small><b>${hrs(d.hours)}</b></div><div><small>هزینه کارگری</small><b>${money(d.labor)}</b></div></div>`:`<div class="sum"><div><small>روزهای کار من</small><b>${fa(d.myDays)}</b></div><div><small>کل روزهای دفتر کار</small><b>${fa(d.allDays)}</b></div><div><small>جمع ساعت ثبت‌شده</small><b>${hrs(d.hours)}</b></div><div><small>هزینه کارگری</small><b>${money(d.labor)}</b></div><div><small>دریافت از کارفرما</small><b>${money(d.inn)}</b></div><div><small>هزینه‌های ثبت‌شده</small><b>${money(d.out)}</b></div></div>`;
+  const sm=pdf?`<div class="ps-sum"><div><small>روزهای کار من</small><b>${fa(d.myDays)}</b></div><div><small>نفر-روز کارمندان</small><b>${fa(d.empDays)}</b></div><div><small>روزمزد من تا اینجا</small><b>${money(d.myEarn)}</b></div><div><small>کل روزهای دفتر کار</small><b>${fa(d.allDays)}</b></div><div><small>جمع ساعت ثبت‌شده</small><b>${hrs(d.hours)}</b></div><div><small>هزینه کارگری</small><b>${money(d.labor)}</b></div></div>`:`<div class="sum"><div><small>🙋 روزهای کار من</small><b>${fa(d.myDays)}</b></div><div><small>👷 نفر-روز کارمندان</small><b>${fa(d.empDays)}</b></div><div><small>💪 روزمزد من تا اینجا</small><b>${money(d.myEarn)}</b></div><div><small>کل روزهای دفتر کار</small><b>${fa(d.allDays)}</b></div><div><small>جمع ساعت ثبت‌شده</small><b>${hrs(d.hours)}</b></div><div><small>هزینه کارگری</small><b>${money(d.labor)}</b></div><div><small>دریافت از کارفرما</small><b>${money(d.inn)}</b></div><div><small>هزینه‌های ثبت‌شده</small><b>${money(d.out)}</b></div></div>`;
   const H=pdf?'ps-h3':'';const h3=t=>pdf?`<div class="ps-h3">${t}</div>`:`<h3 style="margin-top:14px">${t}</h3>`;
-  return sm+(d.lg.length?h3('کارهای انجام‌شده')+`<div class="tw">${tb(['تاریخ','روز','انجام‌دهنده','ساعت','شرح کار'],ws)}</div>`:'<div class="empty">در این بازه کاری در دفتر ثبت نشده است.</div>')+(pr?h3('کارکرد کارگران در این پروژه')+`<div class="tw">${tb(['کارمند','روز کار','اضافه‌کار (ساعت)','مبلغ'],pr)}</div>`:'')+(fn?h3('مالی پروژه')+`<div class="tw">${tb(['تاریخ','نوع','مبلغ','توضیح'],fn)}</div>`:'')}
+  return sm+(d.lg.length?h3('کارهای انجام‌شده')+`<div class="tw">${tb(['تاریخ','روز','انجام‌دهنده','نوع کار','ساعت','شرح کار'],ws)}</div>`:'<div class="empty">در این بازه کاری در دفتر ثبت نشده است.</div>')+(Object.keys(d.kinds).length?h3('خلاصه بر اساس نوع کار')+`<div class="tw">${tb(['نوع کار','تعداد ثبت','روز','ساعت'],Object.entries(d.kinds).map(([k,v])=>`<tr><td>${esc(k)}</td><td>${fa(v.n)}</td><td>${fa(v.d.size)}</td><td>${hrs(v.h)}</td></tr>`).join(''))}</div>`:'')+(pr?h3('کارکرد کارگران در این پروژه')+`<div class="tw">${tb(['کارمند','روز کار','اضافه‌کار (ساعت)','مبلغ'],pr)}</div>`:'')+(fn?h3('مالی پروژه')+`<div class="tw">${tb(['تاریخ','نوع','مبلغ','توضیح'],fn)}</div>`:'')}
 function renderPrjRep(){const d=prjData();$('pr-out').innerHTML=d?(d.from>d.to?'<div class="empty">تاریخ شروع باید قبل از پایان باشد.</div>':prjInner(d,false)):'<div class="empty">پروژه‌ای انتخاب نشده است.</div>'}
 function prjSheet(){const d=prjData();return `<div class="ps-head"><div><div class="ps-t">${esc(S.set.company||'حسابداری کار مارال')}</div><div class="ps-s">گزارش پروژه: ${esc(d.p.name)}${d.p.client?' · کارفرما: '+esc(d.p.client):''}${d.p.addr?' · '+esc(d.p.addr):''}</div><div class="ps-s">از ${fmtD(d.from)} تا ${fmtD(d.to)} · وضعیت: ${d.p.status}</div></div><div class="ps-s">تاریخ تهیه: ${fmtD(jstr(...nowJ()))}</div></div>`+prjInner(d,true)}
-function prjCsv(){const d=prjData();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const R=[['گزارش پروژه',d.p.name],['از',d.from,'تا',d.to],[],['روزهای کار من',d.myDays],['کل روزهای دفتر',d.allDays],['جمع ساعت',d.hours],[],['تاریخ','روز','انجام‌دهنده','ساعت','شرح']];
-  d.lg.forEach(l=>R.push([l.date,WD[wdOf(l.date)],l.who&&emp(l.who)?emp(l.who).name:'خودم',l.h||'',l.desc]));R.push([],['کارگران','روز کار','اضافه‌کار','مبلغ']);Object.entries(d.per).forEach(([k,v])=>R.push([k,v.d,v.ot,Math.round(v.a)]));
+function prjCsv(){const d=prjData();const q=v=>'"'+String(v).replace(/"/g,'""')+'"';const R=[['گزارش پروژه',d.p.name],['از',d.from,'تا',d.to],[],['روزهای کار من',d.myDays],['نفر-روز کارمندان',d.empDays],['روزمزد من',d.myWage],['مبلغ روزمزد من تا اینجا',d.myEarn],['کل روزهای دفتر',d.allDays],['جمع ساعت',d.hours],[],['تاریخ','روز','انجام‌دهنده','نوع کار','ساعت','شرح']];
+  d.lg.forEach(l=>R.push([l.date,WD[wdOf(l.date)],l.who&&emp(l.who)?emp(l.who).name:'خودم',l.kind||'',l.h||'',l.desc]));R.push([],['کارگران','روز کار','اضافه‌کار','مبلغ']);Object.entries(d.per).forEach(([k,v])=>R.push([k,v.d,v.ot,Math.round(v.a)]));
   R.push([],['دریافت',d.inn],['هزینه',d.out],['هزینه کارگری',Math.round(d.labor)]);return'﻿'+R.map(x=>x.map(q).join(',')).join('\r\n')}
 /* ---- state ---- */
 let S={emps:[],places:[],days:[],pays:[],projects:[],logs:[],pfin:[],staff:[],law:Object.assign({},LAW0),set:{hours:8,coef:1.4,unit:'تومان'}};
-const norm=j=>({emps:j.emps||[],places:j.places||[],days:j.days||[],pays:j.pays||[],projects:j.projects||[],logs:j.logs||[],pfin:j.pfin||[],staff:j.staff||[],upd:j.upd||0,law:Object.assign({},LAW0,j.law||{}),set:Object.assign({hours:8,coef:1.4,unit:'تومان',company:'',pin:''},j.set||{})});
+const norm=j=>({emps:j.emps||[],places:j.places||[],days:j.days||[],pays:j.pays||[],projects:j.projects||[],logs:j.logs||[],pfin:j.pfin||[],staff:j.staff||[],upd:j.upd||0,law:Object.assign({},LAW0,j.law||{}),set:Object.assign({hours:8,coef:1.4,unit:'تومان',company:'',pin:'',theme:'auto',acc:'teal',fs:15,home:'home',mywage:0},j.set||{})});
 try{const l=localStorage.getItem('maral-acc');if(l)S=norm(JSON.parse(l))}catch(e){}
 let dbDoc=null,saveT=null;
 function persist(){S.upd=Date.now();try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(e){}
@@ -659,7 +740,7 @@ async function copyText(t){try{await navigator.clipboard.writeText(t);toast('گ�
 /* ---- stats ---- */
 function renderStats(){let k=0,d=0;S.emps.forEach(e=>{const b=balNow(e.id);if(b>0)k+=b;else d-=b});
   const[y,m]=nowJ(),pre=y+'-'+p2(m)+'-';const mw=S.days.filter(r=>r.worked&&r.date.startsWith(pre)).length;
-  $('stats').innerHTML=`<div class="stat"><small>کارمندان</small><b>${fa(S.emps.length)}</b></div><div class="stat"><small>کارکرد ${MN[m-1]}</small><b>${fa(mw)} روز</b></div><div class="stat k"><small>بستانکاری کارمندان</small><b>${money(k)} ${U()}</b></div><div class="stat d"><small>بدهی کارمندان</small><b>${money(d)} ${U()}</b></div>`}
+  $('stats').innerHTML=`<div class="stat"><small>👷 کارمندان</small><b>${fa(S.emps.length)}</b></div><div class="stat"><small>🗓️ کارکرد ${MN[m-1]}</small><b>${fa(mw)} روز</b></div><div class="stat k"><small>🟢 بستانکاری کارمندان</small><b>${money(k)} ${U()}</b></div><div class="stat d"><small>🔴 بدهی کارمندان</small><b>${money(d)} ${U()}</b></div>`}
 /* ---- PDF ---- */
 function sheetHtml(){const{id,from,to,place}=repArgs();const u=U();
   const list=id?[calc(id,from,to,place)]:S.emps.map(e=>calc(e.id,from,to,place));
@@ -692,7 +773,7 @@ async function pdfDownload(){try{const pg=$('pv').hidden?await pdfPrepare():(PG|
   pg.forEach((p,i)=>{if(i)doc.addPage();doc.addImage(p,'JPEG',0,0,595.28,841.89)});
   const{id,from,to}=repArgs();await saveFile(PDFSRC?PDFSRC.name:`karkard-${id?(emp(id)?.name||'emp'):'all'}-${from}_${to}.pdf`,doc.output('blob'),'application/pdf')}catch(e){toast('ساخت PDF انجام نشد')}}
 /* ---- render all ---- */
-function renderAll(){PG=null;renderStats();renderWork();renderPays();renderEmps();renderPlaces();empOpts($('r-emp'),true);empOpts($('py-emp'),true);placeOpts($('r-place'),true);renderReport();renderPrj();renderStaff();renderLaw()}
+function renderAll(){PG=null;renderStats();renderWork();renderPays();renderEmps();renderPlaces();empOpts($('r-emp'),true);empOpts($('py-emp'),true);placeOpts($('r-place'),true);renderReport();renderPrj();renderStaff();renderLaw();renderHome();$('s-mywage').value=fmtIn(S.set.mywage||0);themeUI()}
 /* ---- events ---- */
 const armed=(b)=>{if(b.dataset.armed){delete b.dataset.armed;return true}b.dataset.armed=1;const t=b.textContent;b.textContent='مطمئنید؟';setTimeout(()=>{if(b.dataset.armed){delete b.dataset.armed;b.textContent=t}},3000);return false};
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act],[data-tab]');if(!b)return;
@@ -736,17 +817,17 @@ document.addEventListener('input',e=>{const t=e.target;if(t.classList.contains('
 /* ---- new handlers ---- */
 const LAWF=[['daily','حداقل مزد روزانه'],['hdiv','مقسوم‌علیه مزد ساعتی (ساعت در روز)'],['legalWeek','ساعت موظفی هفتگی'],['housing','حق مسکن (ماهانه)'],['bon','بن کارگری (ماهانه)'],['mar','حق تأهل (ماهانه)'],['childd','حق اولاد (روز مزد برای هر فرزند)'],['maxchild','حداکثر فرزند مشمول'],['sen','پایه سنوات (ماهانه برای هر سال)'],['otc','ضریب اضافه‌کار'],['holc','ضریب جمعه‌کاری و تعطیل‌کاری'],['night','ضریب حق شب‌کاری (مثلاً ۰.۳۵)'],['w','بیمه سهم کارگر (٪)'],['e','بیمه سهم کارفرما (٪)'],['u','بیمه بیکاری (٪)'],['capx','سقف بیمه (برابر حداقل دستمزد ماهانه)']];
 function renderLaw(){$('lw-box').innerHTML=LAWF.map(([k,l])=>`<div class="field"><label for="lw-${k}">${l}</label><input id="lw-${k}" data-law="${k}" inputmode="decimal" value="${S.law[k]}"></div>`).join('');$('cmp').value=S.set.company||''}
-function prjClear(){['pj-id','pj-name','pj-client','pj-addr','pj-amt','pj-note'].forEach(i=>$(i).value='');$('pj-status').value='در حال اجرا';$('pj-head').textContent='ثبت پروژه جدید';$('pj-cancel').hidden=true}
+function prjClear(){['pj-id','pj-name','pj-client','pj-phone','pj-wage','pj-addr','pj-amt','pj-note'].forEach(i=>$(i).value='');$('pj-status').value='در حال اجرا';$('pj-head').textContent='ثبت پروژه جدید';$('pj-cancel').hidden=true}
 function setPdf(src){PDFSRC=src;return pdfPreview()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;
   if(a==='savePrj'){const n=$('pj-name').value.trim();if(!n){toast('نام پروژه را وارد کنید');return}
-    const rec={id:$('pj-id').value||uid(),name:n,client:$('pj-client').value.trim(),addr:$('pj-addr').value.trim(),start:dpGet('pjstart'),status:$('pj-status').value,amt:num($('pj-amt').value),note:$('pj-note').value.trim()};
+    const rec={id:$('pj-id').value||uid(),name:n,client:$('pj-client').value.trim(),phone:$('pj-phone').value.trim(),mywage:num($('pj-wage').value),addr:$('pj-addr').value.trim(),start:dpGet('pjstart'),status:$('pj-status').value,amt:num($('pj-amt').value),note:$('pj-note').value.trim()};
     const i=S.projects.findIndex(x=>x.id===rec.id);if(i>=0){const old=S.projects[i].name;if(old!==n)S.days.forEach(r=>{if(r.place===old)r.place=n});S.projects[i]=rec}else S.projects.push(rec);prjClear();persist();renderAll();toast('پروژه ذخیره شد')}
   else if(a==='cancelPrj')prjClear();
-  else if(a==='editPrj'){const p=prj(id);$('pj-id').value=p.id;$('pj-name').value=p.name;$('pj-client').value=p.client||'';$('pj-addr').value=p.addr||'';$('pj-status').value=p.status;$('pj-amt').value=fmtIn(p.amt);$('pj-note').value=p.note||'';if(p.start)dpSet('pjstart',p.start);$('pj-head').textContent='ویرایش '+p.name;$('pj-cancel').hidden=false;scrollTo({top:0,behavior:'smooth'})}
+  else if(a==='editPrj'){const p=prj(id);$('pj-id').value=p.id;$('pj-name').value=p.name;$('pj-client').value=p.client||'';$('pj-phone').value=p.phone||'';$('pj-wage').value=p.mywage?fmtIn(p.mywage):'';$('pj-addr').value=p.addr||'';$('pj-status').value=p.status;$('pj-amt').value=fmtIn(p.amt);$('pj-note').value=p.note||'';if(p.start)dpSet('pjstart',p.start);$('pj-head').textContent='ویرایش '+p.name;$('pj-cancel').hidden=false;scrollTo({top:0,behavior:'smooth'})}
   else if(a==='delPrj'){if(!armed(b))return;S.projects=S.projects.filter(x=>x.id!==id);S.logs=S.logs.filter(x=>x.prj!==id);S.pfin=S.pfin.filter(x=>x.prj!==id);persist();renderAll()}
   else if(a==='saveLog'){const p=$('lg-prj').value,d=$('lg-desc').value.trim();if(!p||!d){toast('پروژه و شرح کار را وارد کنید');return}
-    S.logs.push({id:uid(),prj:p,date:dpGet('lgdp'),who:$('lg-who').value,h:num($('lg-h').value),desc:d});$('lg-desc').value='';persist();renderAll();toast('در دفتر کار ثبت شد')}
+    S.logs.push({id:uid(),prj:p,date:dpGet('lgdp'),who:$('lg-who').value,h:num($('lg-h').value),kind:$('lg-kind').value.trim(),desc:d});$('lg-desc').value='';persist();renderAll();toast('در دفتر کار ثبت شد')}
   else if(a==='delLog'){if(!armed(b))return;S.logs=S.logs.filter(x=>x.id!==id);persist();renderAll()}
   else if(a==='saveFin'){const p=$('pf-prj').value,m=num($('pf-amt').value);if(!p||m<=0){toast('پروژه و مبلغ را وارد کنید');return}
     S.pfin.push({id:uid(),prj:p,date:dpGet('pfdp'),type:$('pf-type').value,amt:m,note:$('pf-note').value.trim()});$('pf-amt').value='';$('pf-note').value='';persist();renderAll();toast('ثبت شد')}
@@ -771,14 +852,15 @@ document.addEventListener('change',e=>{const t=e.target,id=t.id;
   if(id==='st-shift'){const sh=SHIFTS.find(x=>x.id===t.value);if(sh){$('st-pct').value=sh.p;$('st-n35').checked=!!sh.n35}}
   else if(id==='lg-prj'||id==='pf-prj')renderPrj();
   else if(id==='pr-prj')renderPrjRep();
-  else if(id==='sl-staff'||id==='sl-m'||id==='sl-y')renderSlip();
+  else if(id==='sl-staff'){slSync();renderSlip()}
+  else if(id==='sl-m'||id==='sl-y'||id==='sl-shift')renderSlip();
   else if(id==='cmp'){S.set.company=t.value.trim();persist()}
   else if(t.dataset&&t.dataset.k){const it=SLIPITEMS[+t.dataset.i];if(it){it[t.dataset.k]=t.value;renderSlip()}}});
 document.addEventListener('input',e=>{const t=e.target;
   if(['sl-abs','sl-ot','sl-hol'].includes(t.id))renderSlip();
   else if(t.dataset&&t.dataset.k&&t.dataset.k!=='t'){const it=SLIPITEMS[+t.dataset.i];if(it){it[t.dataset.k]=t.value;renderSlip()}}
   else if(t.dataset&&t.dataset.law){S.law[t.dataset.law]=num(t.value);persist();renderSlip()}});
-document.addEventListener('dpchange',e=>{if(e.target.id==='prfrom'||e.target.id==='prto')renderPrjRep()});
+document.addEventListener('dpchange',e=>{if(e.target.id==='prfrom'||e.target.id==='prto')renderPrjRep();else if(e.target.id==='slcyc')renderSlip()});
 
 /* ---- exports per section ---- */
 function dataBlob(u){const p=u.split(','),m=/:(.*?);/.exec(p[0])[1],b=atob(p[1]),a=new Uint8Array(b.length);for(let i=0;i<b.length;i++)a[i]=b.charCodeAt(i);return new Blob([a],{type:m})}
@@ -800,8 +882,8 @@ function srcFor(k){
   if(k==='slip'){const x=slipCur();if(!x)return null;return{html:()=>slipHtml(x.st,x.y,x.m,x.c),name:`payslip-${x.y}-${p2(x.m)}-${x.st.code||'staff'}.pdf`}}}
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-exp]');if(!b)return;const[k,f]=b.dataset.exp.split(':'),src=srcFor(k);if(!src)return;PDFSRC=src;
   if(f==='prev')pdfPreview();else if(f==='pdf')pdfDownload();else if(f==='img')imgDownload();else if(f==='csv')saveFile(src.name.replace(/\.pdf$/,'.csv'),src.csv(),'text/csv;charset=utf-8')});
-const HERO={work:['#0a4f5c','#0e7c7b','ثبت کارکرد روزانه و گزارش'],pay:['#0b5d3b','#1f9d62','مبالغ دریافتی کارمندان'],emp:['#1c3f8f','#2f6fdb','کارمندان و مانده حساب'],prj:['#8a3b08','#e0782a','پروژه‌ها، دفتر کار و مالی'],slip:['#43257f','#7a4fd0','فیش حقوقی طبق قانون کار'],set:['#26343b','#55666f','تنظیمات و پشتیبان‌گیری']};
-document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;const h=HERO[b.dataset.tab];if(h){document.documentElement.style.setProperty('--hero',`linear-gradient(135deg,${h[0]} 0%,${h[1]} 100%)`);$('sub').textContent=h[2];scrollTo({top:0})}});
+const HERO={home:['','','خلاصه و دسترسی سریع'],work:['#0a4f5c','#0e7c7b','ثبت کارکرد روزانه و گزارش'],pay:['#0b5d3b','#1f9d62','مبالغ دریافتی کارمندان'],emp:['#1c3f8f','#2f6fdb','کارمندان و مانده حساب'],prj:['#8a3b08','#e0782a','پروژه‌ها، دفتر کار و مالی'],slip:['#43257f','#7a4fd0','فیش حقوقی طبق قانون کار'],set:['#26343b','#55666f','تنظیمات و پشتیبان‌گیری']};
+document.addEventListener('click',e=>{const b=e.target.closest('[data-tab]');if(!b)return;const h=HERO[b.dataset.tab];if(h){$('sub').textContent=h[2];scrollTo({top:0})}});
 $('pv').querySelector('.row').insertAdjacentHTML('beforeend','<button class="btn alt sm" data-act="imgModalDl">دانلود عکس</button>');
 document.addEventListener('click',e=>{const b=e.target.closest('[data-act="imgModalDl"]');if(b)imgDownload()});
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.o){SLOPT[t.dataset.o].on=t.checked;renderOpts();renderSlip()}});
@@ -837,13 +919,43 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
     catch(err){auMsg('ورود با Google انجام نشد ('+(err.code||err.message)+')',1)}}
   else if(a==='auSync'){if(!FBU){toast('ابتدا وارد حساب شوید');return}try{await cloudPull();await cloudPush();toast('همگام‌سازی شد')}catch(_){toast('همگام‌سازی انجام نشد')}}
   else if(a==='auOut'){if(!FBU){toast('وارد حساب نیستید');return}try{await firebase.auth().signOut();toast('از حساب خارج شدید')}catch(_){}}});
+/* ---- theme / home / panes / contacts ---- */
+const ACC={teal:['#0e7c7b','#0a5c6e','#2bb5b0','#1b8e9d'],blue:['#2563eb','#1e40af','#6ea0ff','#3b6fe0'],purple:['#7c3aed','#5b21b6','#a98bff','#7c5bd6'],orange:['#d9650f','#a14a08','#f5964a','#d9650f'],green:['#15803d','#166534','#4cc38a','#2e9d63'],rose:['#e11d48','#9f1239','#ff7a95','#e0405f']};
+function applyTheme(){const t=S.set.theme||'auto',R=document.documentElement;if(t==='auto')R.removeAttribute('data-theme');else R.setAttribute('data-theme',t);
+  const dark=t==='dark'||(t==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches),c=ACC[S.set.acc]||ACC.teal;
+  const a=dark?c[2]:c[0],a2=dark?c[3]:c[1];R.style.setProperty('--accent',a);R.style.setProperty('--accent2',a2);R.style.setProperty('--on-accent',dark?'#0b1517':'#fff');
+  R.style.setProperty('--hero',dark?`linear-gradient(135deg,color-mix(in srgb,${a} 30%,#000),color-mix(in srgb,${a} 58%,#000))`:`linear-gradient(135deg,${a2},${a})`);R.style.setProperty('--fs',(S.set.fs||15)+'px')}
+function themeUI(){applyTheme();document.querySelectorAll('#th-mode button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.th===(S.set.theme||'auto')));
+  document.querySelectorAll('#th-fs button').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.fs===(+S.set.fs||15)));document.querySelectorAll('#th-home button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.hm===(S.set.home||'home')));
+  const sw=$('th-acc');if(!sw.children.length)sw.innerHTML=Object.keys(ACC).map(k=>`<button data-ac="${k}" style="background:${ACC[k][0]}" aria-label="${k}"></button>`).join('');sw.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.ac===(S.set.acc||'teal')))}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-th],[data-ac],[data-fs],[data-hm]');if(!b)return;const d=b.dataset;
+  if(d.th)S.set.theme=d.th;else if(d.ac)S.set.acc=d.ac;else if(d.fs)S.set.fs=+d.fs;else if(d.hm)S.set.home=d.hm;persist();themeUI()});
+matchMedia('(prefers-color-scheme: dark)').addEventListener&&matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if((S.set.theme||'auto')==='auto')applyTheme()});
+document.addEventListener('change',e=>{if(e.target.id==='s-mywage'){S.set.mywage=num(e.target.value);persist();renderPrj()}});
+function renderHome(){const[y,m,d]=nowJ();const h=new Date().getHours();$('hm-hi').textContent=(h<5?'شب بخیر 🌙':h<12?'صبح بخیر ☀️':h<17?'ظهر بخیر 🌤️':h<20?'عصر بخیر 🌇':'شب بخیر 🌙');
+  $('hm-date').textContent='📅 امروز '+WD[wdOf(jstr(y,m,d))]+' '+fa(d)+' '+MN[m-1]+' '+fa(y);const pre=jstr(y,m,1).slice(0,8);
+  const wd=S.days.filter(r=>r.worked&&r.date.startsWith(pre)).length,py=S.pays.filter(r=>r.date.startsWith(pre)).reduce((q,r)=>q+r.amount,0),pa=S.projects.filter(p=>p.status==='در حال اجرا').length;
+  $('hm-sum').innerHTML=`<div><small>👷 کارمندان</small><b>${fa(S.emps.length)}</b></div><div><small>🏗️ پروژه فعال</small><b>${fa(pa)}</b></div><div><small>🗓️ روز کار این ماه</small><b>${fa(wd)}</b></div><div><small>💵 دریافتی این ماه</small><b>${money(py)} ${U()}</b></div>`;
+  const L=[...S.days].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);$('hm-last').innerHTML=L.length?L.map(r=>{const e=emp(r.emp);return`<div class="item"><span class="avatar">${esc((e?e.name:'؟').trim()[0]||'؟')}</span><div class="t"><b>${e?esc(e.name):'؟'}</b> <span class="muted">${fmtD(r.date)}${r.place?' · 📍 '+esc(r.place):''}</span></div><span class="pill ${r.worked?'y':'n'}">${r.worked?'✅ کار کرد':'❌ غایب'}</span></div>`}).join(''):'<div class="empty">هنوز کارکردی ثبت نشده است. از دکمه‌های بالا شروع کنید 👆</div>'}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;const seg=b.closest('.seg');seg.querySelectorAll('[data-pane]').forEach(x=>{x.setAttribute('aria-selected',x===b);$(x.dataset.pane).hidden=x!==b})});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;const n=document.querySelector('#nav [data-tab="'+b.dataset.go+'"]');if(n)n.click();if(b.dataset.gp){const p=document.querySelector('[data-pane="'+b.dataset.gp+'"]');if(p)p.click()}});
+function normPhone(v){v=String(v||'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[\s\-()]/g,'');if(v.startsWith('+98'))v='0'+v.slice(3);else if(v.startsWith('0098'))v='0'+v.slice(4);else if(v.startsWith('98')&&v.length>=12)v='0'+v.slice(2);return v}
+async function pickContact(id){const inp=$(id);try{let name='',tel='';const C=window.Capacitor,P=C&&C.Plugins&&C.Plugins.Contacts;
+    if(P&&P.pickContact){try{await P.requestPermissions()}catch(_){}const r=await P.pickContact({projection:{name:true,phones:true}});const c=(r&&r.contact)||r||{};tel=(c.phones&&c.phones[0]&&c.phones[0].number)||'';name=(c.name&&(c.name.display||[c.name.given,c.name.family].filter(Boolean).join(' ')))||''}
+    else if(navigator.contacts&&navigator.contacts.select){const r=await navigator.contacts.select(['name','tel'],{multiple:false});if(!r||!r.length)return;tel=(r[0].tel||[])[0]||'';name=(r[0].name||[])[0]||''}
+    else{toast('انتخاب مخاطب روی این دستگاه ممکن نیست؛ شماره را تایپ کنید');return}
+    if(!tel){toast('این مخاطب شماره ندارد');return}inp.value=normPhone(tel);inp.dispatchEvent(new Event('input',{bubbles:true}));
+    const nm={'e-phone':'e-name','st-phone':'st-name','pj-phone':'pj-client'}[id];if(nm&&name&&!$(nm).value.trim())$(nm).value=name;toast('📇 شماره وارد شد')}
+  catch(err){if(!/cancel|dismiss|abort/i.test(String(err&&(err.message||err.name||err))))toast('دسترسی به مخاطبین انجام نشد؛ مجوز را در تنظیمات گوشی بدهید')}}
+document.querySelectorAll('[data-phone]').forEach(el=>el.insertAdjacentHTML('afterend','<button type="button" class="btn alt sm pk" data-pickc="'+el.id+'">📇 انتخاب از مخاطبین</button>'));
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pickc]');if(b)pickContact(b.dataset.pickc)});
 /* ---- boot ---- */
 document.querySelectorAll('[data-dp]').forEach(buildDP);
 {const[y,m]=nowJ();dpSet('rfrom',jstr(y,m,1));dpSet('prfrom',jstr(y,1,1));dpSet('pyfrom',jstr(y,m,1));
- $('st-shift').innerHTML=SHIFTS.map(x=>`<option value="${x.id}">${x.n}</option>`).join('');
+ $('st-shift').innerHTML=SHIFTS.map(x=>`<option value="${x.id}">${x.n}</option>`).join('');$('sl-shift').innerHTML=$('st-shift').innerHTML;dpSet('slcyc',jstr(y,m,1));
  $('sl-m').innerHTML=MN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('sl-y').innerHTML=[y-3,y-2,y-1,y,y+1].map(v=>`<option value="${v}">${fa(v)}</option>`).join('');$('sl-m').value=m;$('sl-y').value=y;}
-stForm();renderItems();renderOpts();initAuth();if(S.set.pin)$('lock').hidden=false;
-renderAll();loadWork();
+stForm();renderItems();renderOpts();slSync();initAuth();if(S.set.pin)$('lock').hidden=false;
+renderAll();loadWork();{const h=S.set.home||'home';if(h!=='home'){const n=document.querySelector('#nav [data-tab="'+h+'"]');n&&n.click()}}
 (async()=>{try{const db=await window.claude?.use?.('db');if(!db)return;dbDoc=db.doc('app/data');const s=await dbDoc.get();
   if(s.exists&&s.data()&&s.data().json){S=norm(JSON.parse(s.data().json));try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(_){}renderAll();loadWork()}
   else if(S.emps.length)persist()}catch(e){}})();

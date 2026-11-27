@@ -29,23 +29,27 @@ jobs:
       - name: Add Android
         run: |
           npx cap add android
+          npx capacitor-assets generate --android --assetPath assets
           npx cap sync android
       - name: Prepare signing key
-        if: env.KS_PASS != '' && env.KS_B64 != ''
         run: |
-          echo "$KS_B64" | base64 -d > release.keystore
+          if [ -n "$KS_PASS" ] && [ -n "$KS_B64" ]; then
+            echo "$KS_B64" | base64 -d > release.keystore
+            echo "SIGN_FILE=../../release.keystore" >> $GITHUB_ENV
+            echo "SIGN_PASS=$KS_PASS" >> $GITHUB_ENV
+            echo "SIGN_ALIAS=maral" >> $GITHUB_ENV
+          else
+            echo "SIGN_FILE=../../debug.keystore" >> $GITHUB_ENV
+            echo "SIGN_PASS=android" >> $GITHUB_ENV
+            echo "SIGN_ALIAS=androiddebugkey" >> $GITHUB_ENV
+          fi
+      - name: Patch gradle signing
+        run: |
           python3 - <<'PY'
+          import os
           p='android/app/build.gradle'
           s=open(p).read()
-          sc='''    signingConfigs {
-              release {
-                  storeFile file("../../release.keystore")
-                  storePassword System.getenv("KS_PASS")
-                  keyAlias "maral"
-                  keyPassword System.getenv("KS_PASS")
-              }
-          }
-          '''
+          sc='    signingConfigs {\n        release {\n            storeFile file("%s")\n            storePassword "%s"\n            keyAlias "%s"\n            keyPassword "%s"\n        }\n    }\n' % (os.environ['SIGN_FILE'],os.environ['SIGN_PASS'],os.environ['SIGN_ALIAS'],os.environ['SIGN_PASS'])
           s=s.replace("    buildTypes {",sc+"    buildTypes {\n        debug {\n            signingConfig signingConfigs.release\n        }",1)
           s=s.replace("        release {\n            minifyEnabled false","        release {\n            signingConfig signingConfigs.release\n            minifyEnabled false",1)
           open(p,'w').write(s)
@@ -54,7 +58,7 @@ jobs:
         run: |
           cd android
           chmod +x gradlew
-          if [ -n "$KS_PASS" ] && [ -n "$KS_B64" ]; then ./gradlew assembleDebug assembleRelease bundleRelease; else ./gradlew assembleDebug; fi
+          ./gradlew assembleDebug assembleRelease bundleRelease
       - uses: actions/upload-artifact@v4
         with:
           name: maral-android
