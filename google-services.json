@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "170958852518",
+    "project_id": "maral-karkard",
+    "storage_bucket": "maral-karkard.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170958852518:android:e4849b64d6901761bb7f67",
+        "android_client_info": {
+          "package_name": "ir.maral.karkard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170958852518-fl4n2b3097ta3a2g2ccaplgf0b928pg3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOC384bSE1GIJI2lqOIqLcBlyQnpqGoeU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "170958852518-fl4n2b3097ta3a2g2ccaplgf0b928pg3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
