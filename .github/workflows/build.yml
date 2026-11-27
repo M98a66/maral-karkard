@@ -52,6 +52,9 @@ jobs:
           sc='    signingConfigs {\n        release {\n            storeFile file("%s")\n            storePassword "%s"\n            keyAlias "%s"\n            keyPassword "%s"\n        }\n    }\n' % (os.environ['SIGN_FILE'],os.environ['SIGN_PASS'],os.environ['SIGN_ALIAS'],os.environ['SIGN_PASS'])
           s=s.replace("    buildTypes {",sc+"    buildTypes {\n        debug {\n            signingConfig signingConfigs.release\n        }",1)
           s=s.replace("        release {\n            minifyEnabled false","        release {\n            signingConfig signingConfigs.release\n            minifyEnabled false",1)
+          import re
+          s=re.sub(r'versionCode \d+','versionCode '+os.environ['GITHUB_RUN_NUMBER'],s)
+          s=re.sub(r'versionName "[^"]*"','versionName "2.'+os.environ['GITHUB_RUN_NUMBER']+'"',s)
           open(p,'w').write(s)
           PY
       - name: Build
