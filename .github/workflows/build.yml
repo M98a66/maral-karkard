@@ -29,7 +29,6 @@ jobs:
       - name: Add Android
         run: |
           npx cap add android
-          [ -f google-services.json ] && cp google-services.json android/app/ || true
           npx cap sync android
       - name: Prepare signing key
         if: env.KS_PASS != '' && env.KS_B64 != ''
