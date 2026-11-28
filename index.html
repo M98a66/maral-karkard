@@ -542,10 +542,10 @@ const SHIFTS=[
  {id:'two',n:'دو شیفت صبح/عصر (۸ ساعته، هفتگی گردشی)',w:0,c:[...WK(6),...WK(14)],p:10,n35:0},
  {id:'three',n:'سه شیفت صبح/عصر/شب (هفتگی گردشی)',w:0,c:[...WK(6),...WK(14),...WK(22)],p:22.5,n35:0},
  {id:'night8',n:'شب‌کار ثابت ۸ ساعته (۲۲ تا ۶)',w:1,c:WK(22),p:0,n35:1},
- {id:'h12_24',n:'۱۲ ساعت کار / ۲۴ ساعت استراحت',w:0,c:[[12,7],0],p:0,n35:0},
- {id:'h12_48',n:'۱۲ ساعت کار / ۴۸ ساعت استراحت',w:0,c:[[12,7],0,0],p:0,n35:0},
- {id:'h12dn',n:'۱۲ ساعت روز، ۱۲ ساعت شب، ۲ روز استراحت (۴ گروهی)',w:0,c:[[12,7],[12,19],0,0],p:15,n35:0},
- {id:'h12n_24',n:'شب ۱۲ ساعته (۱۹ تا ۷) / ۲۴ ساعت استراحت',w:0,c:[[12,19],0],p:0,n35:1},
+ {id:'h12_24',n:'۱۲ ساعت کار / ۲۴ ساعت استراحت (روز۱ صبح‌وعصر ۶ تا ۱۸، روز۲ شب ۱۸ تا ۶، روز۳ استراحت)',w:0,c:[[12,6],[12,18],0],p:0,n35:1},
+ {id:'h12_48',n:'۱۲ ساعت کار (۶ تا ۱۸) / ۴۸ ساعت استراحت',w:0,c:[[12,6],0,0],p:0,n35:0},
+ {id:'h12dn',n:'۱۲ ساعت روز (۶ تا ۱۸)، ۱۲ ساعت شب (۱۸ تا ۶)، ۲ روز استراحت (۴ گروهی)',w:0,c:[[12,6],[12,18],0,0],p:15,n35:1},
+ {id:'h12n_24',n:'شب ۱۲ ساعته (۱۸ تا ۶) / ۲۴ ساعت استراحت',w:0,c:[[12,18],0],p:0,n35:1},
  {id:'h24_24',n:'۲۴ ساعت کار / ۲۴ ساعت استراحت',w:0,c:[[24,8],0],p:0,n35:0},
  {id:'h24_48',n:'۲۴ ساعت کار / ۴۸ ساعت استراحت',w:0,c:[[24,8],0,0],p:0,n35:0},
  {id:'h24_72',n:'۲۴ ساعت کار / ۷۲ ساعت استراحت',w:0,c:[[24,8],0,0,0],p:0,n35:0},
@@ -559,9 +559,11 @@ function words(n){n=Math.round(n);if(n<=0)return 'صفر';const P=[];let i=0;whi
 function gd(s){const[y,m,d]=parse(s),g=toGreg(y,m,d);return Date.UTC(g[0],g[1]-1,g[2])}
 const HFIX=[[1,1],[1,2],[1,3],[1,4],[1,12],[1,13],[3,14],[3,15],[11,22],[12,29]];
 function isHol(y,m,d){return HFIX.some(h=>h[0]===m&&h[1]===d)||S.hol.includes(jstr(y,m,d))}
+function jOff(y,m,d,o){const t=new Date(Date.UTC(...toGreg(y,m,d).map((v,k)=>k==1?v-1:v))+o*864e5);const j=toJal(t.getUTCFullYear(),t.getUTCMonth()+1,t.getUTCDate());return{y:j[0],m:j[1],d:j[2],wd:t.getUTCDay()}}
 function monthShift(sh,y,m,start){const n=sh.c.length,N=dim(y,m),s0=start?gd(start):gd(jstr(y,m,1));let wd=0,hr=0,night=0,fri=0,holH=0,holD=0;const dl=[];
-  for(let d=1;d<=N;d++){const ds=jstr(y,m,d);const i=sh.w?(wdOf(ds)+1)%7:(((Math.round((gd(ds)-s0)/864e5))%n)+n)%n;const e=sh.c[i];dl.push([d,wdOf(ds),e?e[0]:0,e?e[1]:0]);if(!e)continue;wd++;hr+=e[0];
-    for(let k=0;k<e[0];k++){const h=(e[1]+k)%24;if(h>=22||h<6)night++}if(wdOf(ds)===5)fri+=e[0];else if(isHol(y,m,d)){holH+=e[0];holD++}}
+  for(let d=1;d<=N;d++){const ds=jstr(y,m,d);const i=sh.w?(wdOf(ds)+1)%7:(((Math.round((gd(ds)-s0)/864e5))%n)+n)%n;const e=sh.c[i];dl.push([d,wdOf(ds),e?e[0]:0,e?e[1]:0,i]);if(!e)continue;wd++;hr+=e[0];let fh=0,hh=0;
+    for(let k=0;k<e[0];k++){const t=e[1]+k,h=t%24,o=Math.floor(t/24),a=o?jOff(y,m,d,o):{y,m,d,wd:wdOf(ds)};if(h>=22||h<6)night++;if(a.wd===5)fh++;else if(isHol(a.y,a.m,a.d))hh++}
+    fri+=fh;holH+=hh;if(hh)holD++}
   return{N,wd,hr,night,fri,holH,holD,dl,wk:sh.c.reduce((q,x)=>q+(x?x[0]:0),0)}}
 function calcPay(st,y,m,inp){const L=S.law,R=[],D=[],sh=SHIFTS.find(x=>x.id===st.shift);
   const M=sh?monthShift(sh,y,m,st.cyc):{N:dim(y,m),wd:0,hr:0,night:0,fri:0,holH:0,holD:0};
@@ -599,7 +601,7 @@ const SLIPOPT=[
  {k:'adv',n:'مساعده',t:'d',u:'مبلغ'},{k:'loan',n:'قسط وام',t:'d',u:'مبلغ'},{k:'fine',n:'جریمه / کسر غیبت',t:'d',u:'مبلغ'},{k:'coop',n:'صندوق تعاون / قرض‌الحسنه',t:'d',u:'مبلغ'},{k:'supp',n:'بیمه تکمیلی (سهم کارگر)',t:'d',u:'مبلغ'}];
 let SLOPT={};SLIPOPT.forEach(o=>SLOPT[o.k]={on:false,v:o.d||''});
 function renderOpts(){$('sl-opts').innerHTML=SLIPOPT.map(o=>{const x=SLOPT[o.k];return`<div class="opt"><label class="tick"><input type="checkbox" data-o="${o.k}"${x.on?' checked':''}> ${o.n}${o.t==='d'?' <small class="muted">(کسر)</small>':''}</label>${x.on?`<input data-ov="${o.k}"${o.m==='amt'||o.t==='d'?' class="money"':''} inputmode="decimal" placeholder="${o.u}" value="${esc(x.v)}">`:''}</div>`}).join('')}
-function shType(r){if(!r[2])return{i:'💤',n:'استراحت',k:'off'};const h=r[3];return h>=6&&h<12?{i:'☀️',n:'صبح',k:'am'}:h>=12&&h<18?{i:'🌆',n:'عصر',k:'pm'}:{i:'🌙',n:'شب',k:'nt'}}
+function shType(r){if(!r[2])return{i:'💤',n:'استراحت',k:'off'};const h=r[3];return r[2]>=10&&h>=5&&h<12?{i:'☀️',n:'روز',k:'am'}:h>=5&&h<12?{i:'☀️',n:'صبح',k:'am'}:h>=12&&h<18?{i:'🌆',n:'عصر',k:'pm'}:{i:'🌙',n:'شب',k:'nt'}}
 function shiftCal(c,y,m){if(!c.sh)return'';const dl=c.M.dl,cnt={am:0,pm:0,nt:0,off:0};let fd=0,fh=0,hd=0,hh=0;
   const cells=dl.map(r=>{const t=shType(r),fri=r[1]===5,hol=isHol(y,m,r[0]);cnt[t.k]++;if(r[2]&&fri){fd++;fh+=r[2]}if(r[2]&&hol&&!fri){hd++;hh+=r[2]}
     return`<div class="cd ${t.k}${fri?' fr':''}${hol?' ho':''}"><b>${fa(r[0])}</b><span>${hol?'🎌':t.i}</span><small>${r[2]?fa(r[2])+'س':'—'}</small>${r[2]&&fri?'<em>ج</em>':''}</div>`});
@@ -714,7 +716,7 @@ function loadWork(){const id=$('w-emp').value,date=dpGet('wdp'),e=emp(id);
   $('w-worked').checked=r?r.worked:true;$('w-wage').value=r?fmtIn(r.wage):(e&&e.wage?fmtIn(e.wage):'');
   $('w-ot').value=r&&r.ot?r.ot:'';$('w-place').value=r?r.place||'':$('w-place').value;$('w-note').value=r?r.note||'':'';
   $('w-msg').textContent=r?'برای این روز قبلاً ثبت شده؛ ذخیره، آن را جایگزین می‌کند.':'';prevWork()}
-const fmtIn=n=>n?Math.round(n).toLocaleString('en-US'):'';
+const fmtIn=n=>n?money(n):'';
 function prevWork(){const wage=num($('w-wage').value),ot=num($('w-ot').value),w=$('w-worked').checked;
   const b=w?wage:0,o=ot*(wage/(S.set.hours||8))*S.set.coef;
   $('w-prev').innerHTML=`مزد روز: <b>${money(b)}</b> · اضافه‌کار: <b>${money(o)}</b> · جمع: <b>${money(b+o)} ${U()}</b>`}
@@ -857,7 +859,8 @@ document.addEventListener('change',e=>{const t=e.target.id;
   else if(t==='s-hours'||t==='s-coef'||t==='s-unit'){S.set.hours=num($('s-hours').value)||8;S.set.coef=num($('s-coef').value)||1;S.set.unit=$('s-unit').value;persist();renderAll()}
   else if(t==='restore'){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{try{const j=JSON.parse(rd.result);if(!Array.isArray(j.emps))throw 0;S=norm(j);persist();renderAll();toast('اطلاعات بازیابی شد')}catch(_){toast('فایل پشتیبان معتبر نیست')}};rd.readAsText(f);e.target.value=''}});
 document.addEventListener('dpchange',e=>{const id=e.target.id;if(id==='wdp'){loadWork()}else if(id==='rfrom'||id==='rto')renderReport()});
-document.addEventListener('input',e=>{const t=e.target;if(t.classList.contains('money')){const d=t.value.replace(/[^\d۰-۹٠-٩]/g,'');t.value=d?num(d).toLocaleString('en-US'):''}
+document.addEventListener('input',e=>{const t=e.target;if(t.classList.contains('money')){const d=t.value.replace(/[^\d۰-۹٠-٩]/g,'');t.value=d?money(num(d)):''}
+  else if(t.matches&&t.matches('input[inputmode=numeric],input[inputmode=decimal],input[inputmode=tel]')&&t.type!=='password'){const p=t.selectionStart,v=t.value.replace(/[0-9]/g,c=>'۰۱۲۳۴۵۶۷۸۹'[c]).replace(/[٠-٩]/g,c=>'۰۱۲۳۴۵۶۷۸۹'['٠١٢٣٤٥٦٧٨٩'.indexOf(c)]);if(v!==t.value){t.value=v;try{t.setSelectionRange(p,p)}catch(_){}}}
   if(t.id==='w-wage'||t.id==='w-ot')prevWork()});
 /* ---- new handlers ---- */
 const LAWF=[['daily','حداقل مزد روزانه'],['hdiv','مقسوم‌علیه مزد ساعتی (ساعت در روز)'],['legalWeek','ساعت موظفی هفتگی'],['housing','حق مسکن (ماهانه)'],['bon','بن کارگری (ماهانه)'],['mar','حق تأهل (ماهانه)'],['childd','حق اولاد (روز مزد برای هر فرزند)'],['maxchild','حداکثر فرزند مشمول'],['sen','پایه سنوات (ماهانه برای هر سال)'],['otc','ضریب اضافه‌کار'],['holc','ضریب جمعه‌کاری و تعطیل‌کاری'],['night','ضریب حق شب‌کاری (مثلاً ۰.۳۵)'],['w','بیمه سهم کارگر (٪)'],['e','بیمه سهم کارفرما (٪)'],['u','بیمه بیکاری (٪)'],['capx','سقف بیمه (برابر حداقل دستمزد ماهانه)']];
@@ -1007,6 +1010,7 @@ renderAll();loadWork();{const h=S.set.home||'home';if(h!=='home'){const n=docume
 (async()=>{try{const db=await window.claude?.use?.('db');if(!db)return;dbDoc=db.doc('app/data');const s=await dbDoc.get();
   if(s.exists&&s.data()&&s.data().json){S=norm(JSON.parse(s.data().json));try{localStorage.setItem('maral-acc',JSON.stringify(S))}catch(_){}renderAll();loadWork()}
   else if(S.emps.length)persist()}catch(e){}})();
+setInterval(()=>{document.querySelectorAll('input[inputmode=numeric],input[inputmode=decimal],input[inputmode=tel]').forEach(t=>{if(t.type==='password'||t===document.activeElement)return;const v=t.value;if(/[0-9]/.test(v))t.value=t.classList.contains('money')?money(num(v)):fa(v)})},500);
 </script>
 
 </body></html>
