@@ -358,7 +358,8 @@ section,.pane{animation:up .25s ease}
 </section>
 
 <section id="tab-slip" hidden>
-<div class="seg"><button data-pane="pane-sl" aria-selected="true">🧮 محاسبه و فیش</button><button data-pane="pane-law" aria-selected="false">⚖️ قانون کار</button></div>
+<div class="seg"><button data-pane="pane-sl" aria-selected="true">🧮 محاسبه و فیش</button><button data-pane="pane-yr" aria-selected="false">📆 سالانه</button><button data-pane="pane-law" aria-selected="false">⚖️ قانون کار</button></div>
+<div class="pane" id="pane-yr" hidden><div class="row" style="justify-content:center;gap:10px;margin:8px 0"><button class="btn alt sm" data-act="yrnav" data-d="-1">◀ سال قبل</button><b id="yr-t"></b><button class="btn alt sm" data-act="yrnav" data-d="1">سال بعد ▶</button></div><div id="yr-out"></div></div>
 <div class="pane" id="pane-sl">
   <div class="card">
     <h2 id="st-head">🧑‍💼 ثبت پرسنل (فیش حقوقی)</h2>
@@ -605,9 +606,9 @@ function shType(r){if(!r[2])return{i:'💤',n:'استراحت',k:'off'};const h=
 function shiftCal(c,y,m){if(!c.sh)return'';const dl=c.M.dl,cnt={am:0,pm:0,nt:0,off:0};let fd=0,fh=0,hd=0,hh=0;
   const cells=dl.map(r=>{const t=shType(r),fri=r[1]===5,hol=isHol(y,m,r[0]);cnt[t.k]++;if(r[2]&&fri){fd++;fh+=r[2]}if(r[2]&&hol&&!fri){hd++;hh+=r[2]}
     return`<div class="cd ${t.k}${fri?' fr':''}${hol?' ho':''}"><b>${fa(r[0])}</b><span>${hol?'🎌':t.i}</span><small>${r[2]?fa(r[2])+'س':'—'}</small>${r[2]&&fri?'<em>ج</em>':''}</div>`});
-  const off=(dl[0][1]+1)%7;return`<h3 style="margin-top:16px">🗓️ تقویم شیفت ${MN[m-1]} ${fa(y)}</h3><div class="calh">${['ش','ی','د','س','چ','پ','ج'].map(x=>`<span>${x}</span>`).join('')}</div><div class="cal">${'<div></div>'.repeat(off)}${cells.join('')}</div>
+  const off=(dl[0][1]+1)%7;return`<div class="row" style="justify-content:space-between;align-items:center;margin-top:16px"><button class="btn alt sm" data-act="slnav" data-d="-1">▶ ماه قبل</button><h3 style="margin:0">🗓️ ${MN[m-1]} ${fa(y)}</h3><button class="btn alt sm" data-act="slnav" data-d="1">ماه بعد ◀</button></div><div class="calh">${['ش','ی','د','س','چ','پ','ج'].map(x=>`<span>${x}</span>`).join('')}</div><div class="cal">${'<div></div>'.repeat(off)}${cells.join('')}</div>
   <div class="chips" style="margin-top:10px;pointer-events:none"><button>☀️ صبح</button><button>🌆 عصر</button><button>🌙 شب</button><button>💤 استراحت</button><button>🎌 تعطیل رسمی</button><button>ج = جمعه‌کاری</button></div>
-  <div class="sum"><div><small>☀️ روز صبح</small><b>${fa(cnt.am)}</b></div><div><small>🌆 روز عصر</small><b>${fa(cnt.pm)}</b></div><div><small>🌙 روز شب‌کار</small><b>${fa(cnt.nt)}</b></div><div><small>💤 روز استراحت</small><b>${fa(cnt.off)}</b></div><div><small>🗓️ جمعه‌کاری</small><b>${fa(fd)} روز · ${hrs(fh)} ساعت</b></div><div><small>🎌 تعطیل‌کاری</small><b>${fa(hd)} روز · ${hrs(hh)} ساعت</b></div><div><small>⏳ اضافه‌کار ماه</small><b>${hrs(c.ot)} ساعت</b></div><div><small>🌙 ساعت شب‌کاری</small><b>${hrs(c.M.night)}</b></div></div>`}
+  <div class="sum"><div><small>☀️ روز صبح</small><b>${fa(cnt.am)}</b></div><div><small>🌆 روز عصر</small><b>${fa(cnt.pm)}</b></div><div><small>🌙 روز شب‌کار</small><b>${fa(cnt.nt)}</b></div><div><small>💤 روز استراحت</small><b>${fa(cnt.off)}</b></div><div><small>🗓️ جمعه‌کاری</small><b>${fa(fd)} روز · ${hrs(fh)} ساعت</b></div><div><small>🎌 تعطیل‌کاری</small><b>${fa(hd)} روز · ${hrs(hh)} ساعت</b></div><div><small>⏳ کل اضافه‌کار (عادی ${hrs(c.ot)} + جمعه/تعطیل ${hrs(c.hol)})</small><b>${hrs(c.ot+c.hol)} ساعت</b></div><div><small>📏 موظفی ماه / جمع کار</small><b>${hrs(c.legal)} / ${hrs(c.M.hr)}</b></div><div><small>🌙 ساعت شب‌کاری</small><b>${hrs(c.M.night)}</b></div></div>`}
 function shiftTbl(c){if(!c.sh)return'';return`<details style="margin-top:12px"><summary class="muted" style="cursor:pointer">جدول شیفت این ماه (${fa(c.M.wd)} روز کار)</summary><div class="tw"><table><tr><th>روز</th><th>هفته</th><th>ساعت کار</th><th>شروع</th></tr>${c.M.dl.map(r=>`<tr><td>${fa(r[0])}</td><td>${WD[r[1]]}</td><td>${r[2]?fa(r[2]):'استراحت'}</td><td>${r[2]?fa(p2(r[3]))+':۰۰':'—'}</td></tr>`).join('')}</table></div></details>`}
 const stf=id=>S.staff.find(x=>x.id===id);
 function slipHtml(st,y,m,c){const u=U(),hd=st.hire?fmtD(st.hire):'—';
@@ -623,8 +624,17 @@ function slipHtml(st,y,m,c){const u=U(),hd=st.hire?fmtD(st.hire):'—';
 let PDFSRC=null,SLIPITEMS=[];
 function slipInp(){return{hw:$('sl-hw').value,absent:$('sl-abs').value,ot:$('sl-ot').value,hol:$('sl-hol').value,items:SLIPITEMS,opts:SLOPT}}
 function slipCur(q){const st=stf($('sl-staff').value);if(!st){if(!q)toast('ابتدا پرسنل ثبت کنید');return null}const y=+$('sl-y').value,m=+$('sl-m').value;const sv=$('sl-shift').value,sh=SHIFTS.find(q=>q.id===sv);let s2=st;if(sh&&sv!==st.shift)s2=Object.assign({},st,{shift:sv,pct:sh.p,n35:!!sh.n35});const cy=dpGet('slcyc');if(cy)s2=Object.assign({},s2,{cyc:cy});return{st:s2,y,m,c:calcPay(s2,y,m,slipInp())}}
+let YR=0;
+function renderYear(){const st=stf($('sl-staff').value),o=$('yr-out');if(!YR)YR=+$('sl-y').value;$('yr-t').textContent='سال '+fa(YR);if(!st){o.innerHTML='<div class="empty">ابتدا پرسنل ثبت کنید.</div>';return}
+  const sv=$('sl-shift').value,sh=SHIFTS.find(q=>q.id===sv);let s2=st;if(sh&&sv!==st.shift)s2=Object.assign({},st,{shift:sv,pct:sh.p,n35:!!sh.n35});const cy=dpGet('slcyc');if(cy)s2=Object.assign({},s2,{cyc:cy});
+  const T={wd:0,hr:0,nt:0,ot:0,g:0,n:0},rows=[],inp=slipInp();
+  for(let m=1;m<=12;m++){const c=calcPay(s2,YR,m,inp);T.wd+=c.M.wd;T.hr+=c.M.hr;T.nt+=c.M.night;T.ot+=c.ot+c.hol;T.g+=c.gross;T.n+=c.net;
+    const strip=c.sh?c.M.dl.map(r=>{const t=shType(r);return isHol(YR,m,r[0])?'🎌':r[1]===5&&r[2]?'🟠':t.i}).join(''):'';
+    rows.push(`<tr><td>${MN[m-1]}</td><td>${fa(c.M.wd)}</td><td>${hrs(c.M.hr)}</td><td>${hrs(c.M.night)}</td><td>${hrs(c.ot+c.hol)}</td><td>${money(c.gross)}</td><td>${money(c.net)}</td></tr>${strip?`<tr><td colspan="7" style="font-size:12px;letter-spacing:1px;word-break:break-all">${strip}</td></tr>`:''}`)}
+  o.innerHTML=`<div class="muted" style="margin-bottom:6px">${esc(st.name)} — ${s2.shift&&SHIFTS.find(q=>q.id===s2.shift)?esc(SHIFTS.find(q=>q.id===s2.shift).n):''}</div><div class="tw"><table><tr><th>ماه</th><th>روز کار</th><th>ساعت</th><th>شب‌کاری</th><th>اضافه‌کار کل</th><th>ناخالص</th><th>خالص</th></tr>${rows.join('')}<tr><th>جمع</th><th>${fa(T.wd)}</th><th>${hrs(T.hr)}</th><th>${hrs(T.nt)}</th><th>${hrs(T.ot)}</th><th>${money(T.g)}</th><th>${money(T.n)}</th></tr></table></div><small class="muted">☀️ روز · 🌙 شب · 💤 استراحت · 🟠 جمعه‌کاری · 🎌 تعطیل رسمی</small>`}
 function slSync(){const st=stf($('sl-staff').value);if(!st)return;$('sl-shift').value=st.shift||'fix44';if(st.cyc)dpSet('slcyc',st.cyc)}
-function renderSlip(){const o=$('sl-out'),x=slipCur(1);if(!x){o.innerHTML='<div class="empty">برای دیدن محاسبه، یک پرسنل ثبت کنید یا «افزودن نمونه آزمایشی» را بزنید.</div>';return}
+function renderSlip(){try{if($('pane-yr')&&!$('pane-yr').hidden)renderYear()}catch(_){}
+  const o=$('sl-out'),x=slipCur(1);if(!x){o.innerHTML='<div class="empty">برای دیدن محاسبه، یک پرسنل ثبت کنید یا «افزودن نمونه آزمایشی» را بزنید.</div>';return}
   const{c}=x,t=a=>a.map(r=>`<tr><td>${esc(r.n)}</td><td>${money(r.a)}</td></tr>`).join('');
   o.innerHTML=`<div class="sum"><div><small>جمع مزایا</small><b>${money(c.gross)}</b></div><div><small>کسورات</small><b>${money(c.ded)}</b></div><div><small>مشمول بیمه</small><b>${money(c.insb)}</b></div><div><small>سهم کارفرما + بیکاری</small><b>${money(c.eI+c.uI)}</b></div><div class="final"><small>خالص قابل پرداخت (${U()})</small><b>${money(c.net)}</b></div></div>
   <div class="tw"><table><tr><th>شرح</th><th>مبلغ</th></tr>${t(c.R)}${c.D.map(r=>`<tr><td class="neg">− ${esc(r.n)}</td><td class="neg">${money(r.a)}</td></tr>`).join('')}</table></div>
@@ -888,6 +898,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(
   else if(a==='cancelStaff')stForm();
   else if(a==='delStaff'){if(!armed(b))return;S.staff=S.staff.filter(x=>x.id!==id);persist();renderAll()}
   else if(a==='sampleStaff'){const[y,m]=nowJ();const s={id:uid(),name:'علی رضایی (نمونه آزمایشی)',code:'1001',nid:'0012345678',pos:'اپراتور تولید',hire:jstr(y-3,1,15),ins:'9876543210',bank:'IR000000000000000000000000',married:true,kids:1,years:3,daily:S.law.daily,shift:'h12_24',cyc:jstr(y,m,1),pct:0,hard:0,n35:false,b:{housing:1,bon:1,mar:1,child:1,sen:1}};S.staff.push(s);persist();renderAll();$('sl-staff').value=s.id;renderSlip();toast('نمونه اضافه شد؛ پایین‌تر فیش را ببینید')}
+  else if(a==='slnav'||a==='yrnav'){const d=+b.dataset.d;if(a==='yrnav'){YR=(YR||+$('sl-y').value)+d;renderYear();return}let m=+$('sl-m').value+d,y=+$('sl-y').value;if(m>12){m=1;y++}if(m<1){m=12;y--}if(![...$('sl-y').options].some(o=>+o.value===y)){const op=document.createElement('option');op.value=y;op.textContent=fa(y);$('sl-y').add(op);[...$('sl-y').options].sort((p,q)=>p.value-q.value).forEach(o=>$('sl-y').add(o))}$('sl-m').value=m;$('sl-y').value=y;renderSlip()}
   else if(a==='addItem'){SLIPITEMS.push({t:'e1',n:'',a:''});renderItems()}
   else if(a==='delItem'){SLIPITEMS.splice(+id,1);renderItems();renderSlip()}
   else if(a==='slipPrev'||a==='slipDl'){const x=slipCur();if(!x)return;PDFSRC={html:()=>slipHtml(x.st,x.y,x.m,x.c),name:`payslip-${x.y}-${p2(x.m)}-${x.st.code||'staff'}.pdf`};if(a==='slipPrev')pdfPreview();else pdfDownload()}
@@ -988,7 +999,7 @@ function renderHome(){const[y,m,d]=nowJ();const h=new Date().getHours();$('hm-hi
   const wd=S.days.filter(r=>r.worked&&r.date.startsWith(pre)).length,py=S.pays.filter(r=>r.date.startsWith(pre)).reduce((q,r)=>q+r.amount,0),pa=S.projects.filter(p=>p.status==='در حال اجرا').length;
   $('hm-sum').innerHTML=`<div><small>👷 کارمندان</small><b>${fa(S.emps.length)}</b></div><div><small>🏗️ پروژه فعال</small><b>${fa(pa)}</b></div><div><small>🗓️ روز کار این ماه</small><b>${fa(wd)}</b></div><div><small>💵 دریافتی این ماه</small><b>${money(py)} ${U()}</b></div>`;
   const L=[...S.days].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,5);$('hm-last').innerHTML=L.length?L.map(r=>{const e=emp(r.emp);return`<div class="item"><span class="avatar">${esc((e?e.name:'؟').trim()[0]||'؟')}</span><div class="t"><b>${e?esc(e.name):'؟'}</b> <span class="muted">${fmtD(r.date)}${r.place?' · 📍 '+esc(r.place):''}</span></div><span class="pill ${r.worked?'y':'n'}">${r.worked?'✅ کار کرد':'❌ غایب'}</span></div>`}).join(''):'<div class="empty">هنوز کارکردی ثبت نشده است. از دکمه‌های بالا شروع کنید 👆</div>'}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;const seg=b.closest('.seg');seg.querySelectorAll('[data-pane]').forEach(x=>{x.setAttribute('aria-selected',x===b);$(x.dataset.pane).hidden=x!==b})});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pane]');if(!b)return;const seg=b.closest('.seg');seg.querySelectorAll('[data-pane]').forEach(x=>{x.setAttribute('aria-selected',x===b);$(x.dataset.pane).hidden=x!==b});if(b.dataset.pane==='pane-yr')renderYear()});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(!b)return;const n=document.querySelector('#nav [data-tab="'+b.dataset.go+'"]');if(n)n.click();if(b.dataset.gp){const p=document.querySelector('[data-pane="'+b.dataset.gp+'"]');if(p)p.click()}});
 function normPhone(v){v=String(v||'').replace(/[۰-۹]/g,c=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(c)).replace(/[\s\-()]/g,'');if(v.startsWith('+98'))v='0'+v.slice(3);else if(v.startsWith('0098'))v='0'+v.slice(4);else if(v.startsWith('98')&&v.length>=12)v='0'+v.slice(2);return v}
 async function pickContact(id){const inp=$(id);try{let name='',tel='';const C=window.Capacitor,P=C&&C.Plugins&&C.Plugins.Contacts;
@@ -1004,7 +1015,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-pickc]');i
 document.querySelectorAll('[data-dp]').forEach(buildDP);
 {const[y,m]=nowJ();dpSet('rfrom',jstr(y,m,1));dpSet('prfrom',jstr(y,1,1));dpSet('pyfrom',jstr(y,m,1));
  $('st-shift').innerHTML=SHIFTS.map(x=>`<option value="${x.id}">${x.n}</option>`).join('');$('sl-shift').innerHTML=$('st-shift').innerHTML;dpSet('slcyc',jstr(y,m,1));
- $('sl-m').innerHTML=MN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('sl-y').innerHTML=[y-3,y-2,y-1,y,y+1].map(v=>`<option value="${v}">${fa(v)}</option>`).join('');$('sl-m').value=m;$('sl-y').value=y;}
+ $('sl-m').innerHTML=MN.map((n,i)=>`<option value="${i+1}">${n}</option>`).join('');$('sl-y').innerHTML=[y-6,y-5,y-4,y-3,y-2,y-1,y,y+1,y+2,y+3,y+4,y+5,y+6].map(v=>`<option value="${v}">${fa(v)}</option>`).join('');$('sl-m').value=m;$('sl-y').value=y;}
 stForm();renderItems();renderOpts();slSync();initAuth();if(S.set.pin)$('lock').hidden=false;
 renderAll();loadWork();{const h=S.set.home||'home';if(h!=='home'){const n=document.querySelector('#nav [data-tab="'+h+'"]');n&&n.click()}}
 (async()=>{try{const db=await window.claude?.use?.('db');if(!db)return;dbDoc=db.doc('app/data');const s=await dbDoc.get();
